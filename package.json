@@ -1,0 +1,38 @@
+{
+  "name": "bigcapital-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "lerna run dev",
+    "build": "lerna run build",
+    "dev:webapp": "lerna run dev --scope \"@bigcapital/webapp\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\"",
+    "build:webapp": "lerna run build --scope \"@bigcapital/webapp\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\"",
+    "dev:server": "lerna run dev --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\" --scope \"@bigcapital/email-components\"",
+    "build:server": "lerna run build --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\" --scope \"@bigcapital/email-components\"",
+    "serve:server": "lerna run serve --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\"",
+    "test:e2e": "playwright test",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "@commitlint/config-lerna-scopes": "^17.4.2",
+    "@faker-js/faker": "^8.0.2",
+    "@playwright/test": "^1.32.3",
+    "husky": "^8.0.3",
+    "lerna": "^8.1.2",
+    "pnpm": "^9.0.5"
+  },
+  "engines": {
+    "node": "16.x || 17.x || 18.x"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "dependencies": {
+    "tsup": "^8.3.0",
+    "webapp": "^0.0.2",
+    "zustand": "^5.0.3"
+  }
+}

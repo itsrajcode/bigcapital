@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/LogicEvaluation/Lexer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/LogicEvaluation/Lexer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+const OperationType = {
+  LOGIC: 'LOGIC',
+  STRING: 'STRING',
+  COMPARISON: 'COMPARISON',
+  MATH: 'MATH',
+};
+
+export class Lexer {
+  // operation table
+  static get optable() {
+    return {
+      '=': OperationType.LOGIC,
+      '&amp;': OperationType.LOGIC,
+      '|': OperationType.LOGIC,
+      '?': OperationType.LOGIC,
+      ':': OperationType.LOGIC,
+
+      '\'': OperationType.STRING,
+      '"': OperationType.STRING,
+
+      '!': OperationType.COMPARISON,
+      '>': OperationType.COMPARISON,
+      '&lt;': OperationType.COMPARISON,
+
+      '(': OperationType.MATH,
+      ')': OperationType.MATH,
+      '+': OperationType.MATH,
+      '-': OperationType.MATH,
+      '*': OperationType.MATH,
+      '/': OperationType.MATH,
+      '%': OperationType.MATH,
+    };
+  }
+
+  /**
+   * Constructor
+   * @param {*} expression -
+   */
+  constructor(expression) {
+    this.currentIndex = 0;
+    this.input = expression;
+    this.tokenList = [];
+  }
+
+  getTokens() {
+    let tok;
+    do {
+      // read current token, so step should be -1
+      tok = this.pickNext(-1);
+      const pos = this.currentIndex;
+      switch (Lexer.optable[tok]) {
+        case OperationType.LOGIC:
+          // == &amp;&amp; || ===
+          this.readLogicOpt(tok);
+          break;
+
+        case OperationType.STRING:
+          this.readString(tok);
+          break;
+
+        case OperationType.COMPARISON:
+          this.readCompare(tok);
+          break;
+
+        case OperationType.MATH:
+          this.receiveToken();
+          break;
+
+        default:
+          this.readValue(tok);
+      }
+
+      // if the pos not changed, this loop will go into a infinite loop, every step of while loop,
+      // we must move the pos forward
+      // so here we should throw error, for example `1 &amp; 2`
+      if (pos === this.currentIndex &amp;&amp; tok !== undefined) {
+        const err = new Error(`unkonw token ${tok} from input string ${this.input}`);
+        err.name = 'UnknowToken';
+        throw err;
+      }
+    } while (tok !== undefined)
+
+    return this.tokenList;
+  }
+
+  /**
+   * read next token, the index param can set next step, default go foward 1 step
+   *
+   * @param index next postion
+   */
+  pickNext(index = 0) {
+    return this.input[index + this.currentIndex + 1];
+  }
+
+  /**
+   * Store token into result tokenList, and move the pos index
+   *
+   * @param index
+   */
+  receiveToken(index = 1) {
+    const tok = this.input.slice(this.currentIndex, this.currentIndex + index).trim();
+    // skip empty string
+    if (tok) {
+      this.tokenList.push(tok);
+    }
+
+    this.currentIndex += index;
+  }
+
+  // ' or "
+  readString(tok) {
+    let next;
+    let index = 0;
+    do {
+      next = this.pickNext(index);
+      index += 1;
+    } while (next !== tok &amp;&amp; next !== undefined);
+    this.receiveToken(index + 1);
+  }
+
+  // > or &lt; or >= or &lt;= or !==
+  // tok in (>, &lt;, !)
+  readCompare(tok) {
+    if (this.pickNext() !== '=') {
+      this.receiveToken(1);
+      return;
+    }
+    // !==
+    if (tok === '!' &amp;&amp; this.pickNext(1) === '=') {
+      this.receiveToken(3);
+      return;
+    }
+    this.receiveToken(2);
+  }
+
+  // === or ==
+  // &amp;&amp; ||
+  readLogicOpt(tok) {
+    if (this.pickNext() === tok) {
+      // ===
+      if (tok === '=' &amp;&amp; this.pickNext(1) === tok) {
+        return this.receiveToken(3);
+      }
+      // == &amp;&amp; ||
+      return this.receiveToken(2);
+    }
+    // handle as &amp;&amp;
+    // a ? b : c is equal to a &amp;&amp; b || c
+    if (tok === '?' || tok === ':') {
+      return this.receiveToken(1);
+    }
+  }
+
+  readValue(tok) {
+    if (!tok) {
+      return;
+    }
+
+    let index = 0;
+    while (!Lexer.optable[tok] &amp;&amp; tok !== undefined) {
+      tok = this.pickNext(index);
+      index += 1;
+    }
+    this.receiveToken(index);
+  }
+}
+
+export default function token(expression) {
+  const lexer = new Lexer(expression);
+  return lexer.getTokens();
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Lexer_Lexer.html">Lexer</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#DepGraph">DepGraph</a></li><li><a href="global.html#DepGraphCycleError">DepGraphCycleError</a></li><li><a href="global.html#addNode">addNode</a></li><li><a href="global.html#buildLogicExpression">buildLogicExpression</a></li><li><a href="global.html#buildQuery">buildQuery</a></li><li><a href="global.html#compare">compare</a></li><li><a href="global.html#createDFS">createDFS</a></li><li><a href="global.html#down">down</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#parseStatement">parseStatement</a></li><li><a href="global.html#session">session</a></li><li><a href="global.html#up">up</a></li><li><a href="global.html#validateFilterRoles">validateFilterRoles</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Feb 22 2025 13:10:06 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

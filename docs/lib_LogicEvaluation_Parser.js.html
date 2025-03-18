@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/LogicEvaluation/Parser.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/LogicEvaluation/Parser.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>export const OPERATION = {
+  '!': 5,
+  '*': 4,
+  '/': 4,
+  '%': 4,
+  '+': 3,
+  '-': 3,
+  '>': 2,
+  '&lt;': 2,
+  '>=': 2,
+  '&lt;=': 2,
+  '===': 2,
+  '!==': 2,
+  '==': 2,
+  '!=': 2,
+  '&amp;&amp;': 1,
+  '||': 1,
+  '?': 1,
+  ':': 1,
+};
+
+// export interface Node {
+//   left: Node | string | null;
+//   right: Node | string | null;
+//   operation: string;
+//   grouped?: boolean;
+// };
+
+export default class Parser {
+
+  constructor(token) {
+    this.index = -1;
+    this.blockLevel = 0;
+    this.token = token;
+  }
+
+  /**
+   * 
+   * @return {Node | string} =- 
+   */
+  parse() {
+    let tok;
+    let root = {
+      left: null,
+      right: null,
+      operation: null,
+    };
+
+    do {
+      tok = this.parseStatement();
+
+      if (tok === null || tok === undefined) {
+        break;
+      }
+
+      if (root.left === null) {
+        root.left = tok;
+        root.operation = this.nextToken();
+
+        if (!root.operation) {
+          return tok;
+        }
+
+        root.right = this.parseStatement();
+      } else {
+        if (typeof tok !== 'string') {
+          throw new Error('operation must be string, but get ' + JSON.stringify(tok));
+        }
+        root = this.addNode(tok, this.parseStatement(), root);
+      }
+    } while (tok);
+
+    return root;
+  }
+
+  nextToken() {
+    this.index += 1;
+    return this.token[this.index];
+  }
+
+  prevToken() {
+    return this.token[this.index - 1];
+  }
+
+  /**
+   * 
+   * @param {string} operation 
+   * @param {Node|String|null} right 
+   * @param {Node} root 
+   */
+  addNode(operation, right, root) {
+    let pre = root;
+    
+    if (this.compare(pre.operation, operation) &lt; 0 &amp;&amp; !pre.grouped) {
+      
+      while (pre.right !== null &amp;&amp;
+        typeof pre.right !== 'string' &amp;&amp;
+        this.compare(pre.right.operation, operation) &lt; 0 &amp;&amp; !pre.right.grouped) {
+        pre = pre.right;
+      }
+
+      pre.right = {
+        operation,
+        left: pre.right,
+        right,
+      };
+      return root;
+    }
+    return {
+      left: pre,
+      right,
+      operation,
+    }
+  }
+
+  /**
+   * 
+   * @param {String} a 
+   * @param {String} b 
+   */
+  compare(a, b) {
+    if (!OPERATION.hasOwnProperty(a) || !OPERATION.hasOwnProperty(b)) {
+      throw new Error(`unknow operation ${a} or ${b}`);
+    }
+    return OPERATION[a] - OPERATION[b];
+  }
+
+  /**
+   * @return string | Node | null
+   */
+  parseStatement() {
+    const token = this.nextToken();
+    if (token === '(') {
+      this.blockLevel += 1;
+      const node = this.parse();
+      this.blockLevel -= 1;
+
+      if (typeof node !== 'string') {
+        node.grouped = true;
+      }
+      return node;
+    }
+
+    if (token === ')') {
+      return null;
+    }
+
+    if (token === '!') {
+      return { left: null, operation: token, right: this.parseStatement() }
+    }
+
+    // 3 > -12 or -12 + 10
+    if (token === '-' &amp;&amp; (OPERATION[this.prevToken()] > 0 || this.prevToken() === undefined)) {
+      return { left: '0', operation: token, right: this.parseStatement(), grouped: true };
+    }
+
+    return token;
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Lexer_Lexer.html">Lexer</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#DepGraph">DepGraph</a></li><li><a href="global.html#DepGraphCycleError">DepGraphCycleError</a></li><li><a href="global.html#addNode">addNode</a></li><li><a href="global.html#buildLogicExpression">buildLogicExpression</a></li><li><a href="global.html#buildQuery">buildQuery</a></li><li><a href="global.html#compare">compare</a></li><li><a href="global.html#createDFS">createDFS</a></li><li><a href="global.html#down">down</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#parseStatement">parseStatement</a></li><li><a href="global.html#session">session</a></li><li><a href="global.html#up">up</a></li><li><a href="global.html#validateFilterRoles">validateFilterRoles</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Feb 22 2025 13:10:06 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
