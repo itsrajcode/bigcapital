@@ -22,7 +22,9 @@ export default function useApiRequest() {
 
   const http = React.useMemo(() => {
     // Axios instance.
-    const instance = axios.create();
+    const instance = axios.create({
+      baseURL: process.env.REACT_APP_API_BASE_URL,
+    });
 
     // Request interceptors.
     instance.interceptors.request.use(

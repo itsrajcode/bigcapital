@@ -22,8 +22,14 @@ import { ServiceErrorException } from '@/api/exceptions/ServiceErrorException';
 import { GlobalErrorException } from '@/api/exceptions/GlobalErrorException';
 import https from 'https'
 import fs from 'fs'
+import cors from 'cors';
 
 export default ({ app }) => {
+  // Add CORS middleware
+  app.use(cors({
+    origin: '*',
+  }));
+
   // Express configuration.
   app.set('port', 3000);
 

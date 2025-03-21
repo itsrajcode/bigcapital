@@ -92,7 +92,7 @@ RUN npm install -g pnpm
 # Copy application dependency manifests to the container image.
 COPY --chown=node:node ./ ./
 
-# Install application dependencies
+# # Install application dependencies
 RUN apk update
 RUN apk add python3 build-base chromium
 
@@ -100,7 +100,7 @@ RUN apk add python3 build-base chromium
 ENV PYTHON=/usr/bin/python3
 
 # Install packages dependencies for production.
-RUN pnpm install
+RUN pnpm install 
 
 COPY --chown=node:node ./packages/server ./packages/server
 

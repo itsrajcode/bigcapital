@@ -139,10 +139,11 @@
   "scripts": {
     "dev": "cross-env PORT=4000 craco start",
     "build": "craco build",
+    "serve": "cross-env PORT=4000 serve -s build",
+    "build:start": "pnpm run build && pnpm run serve",
     "test": "node scripts/test.js",
     "storybook": "start-storybook -p 6006"
   },
-  "proxy": "http://localhost:3000/",
   "resolutions": {
     "react-error-overlay": "6.0.9"
   },

@@ -8,7 +8,8 @@
     "build:webapp": "lerna run build --scope \"@bigcapital/webapp\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\"",
     "dev:server": "lerna run dev --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\" --scope \"@bigcapital/email-components\"",
     "build:server": "lerna run build --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\" --scope \"@bigcapital/email-components\"",
-    "serve:server": "lerna run serve --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\"",
+    "serve:webapp": "lerna run serve --scope \"@bigcapital/webapp\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\" --scope \"@bigcapital/email-components\"",
+    "serve:server": "lerna run serve --scope \"@bigcapital/server\" --scope \"@bigcapital/utils\" --scope \"@bigcapital/pdf-templates\" --scope \"@bigcapital/email-components\"",
     "test:e2e": "playwright test",
     "prepare": "husky install"
   },
@@ -20,7 +21,9 @@
     "@playwright/test": "^1.32.3",
     "husky": "^8.0.3",
     "lerna": "^8.1.2",
-    "pnpm": "^9.0.5"
+    "pnpm": "^9.0.5",
+    "serve": "^14.2.4",
+    "webapp": "^0.0.2"
   },
   "engines": {
     "node": "16.x || 17.x || 18.x"
@@ -31,8 +34,12 @@
     }
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "server": "^1.0.41",
     "tsup": "^8.3.0",
-    "webapp": "^0.0.2",
     "zustand": "^5.0.3"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

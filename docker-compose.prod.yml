@@ -20,14 +20,23 @@ services:
 
   webapp:
     container_name: bigcapital-webapp
-    image: bigcapitalhq/webapp:latest
-    restart: on-failure
+    build:
+      context: .
+      dockerfile: packages/webapp/Dockerfile
+    expose:
+      - "4000"
+    depends_on:
+      - server
+    environment:
+      - NODE_ENV=production
     networks:
       - bigcapital_network
 
   server:
     container_name: bigcapital-server
-    image: bigcapitalhq/server:latest
+    build:
+      context: .
+      dockerfile: packages/server/Dockerfile
     expose:
       - '3000'
     links:
