@@ -244,5 +244,137 @@
         }
       }
     }
+
+    .analytics__tables {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    @media (max-width: 768px) {
+      .analytics__tables {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+.top-selling-items {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  .chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1E1D2B;
+    margin-bottom: 20px;
+  }
+
+  .chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chart-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 36px;
+  }
+
+  .item-info {
+    width: 150px;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #1E1D2B;
+  }
+
+  .item-icon {
+    font-size: 16px;
+  }
+
+  .item-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar-container {
+    flex-grow: 1;
+    height: 20px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar {
+    height: 100%;
+    background: #42E6FD;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+  }
+
+  .value {
+    color: #1E1D2B;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+
+.data-summary-table {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .table-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #252A31;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #E1E1E1;
+    }
+
+    th {
+      color: #5C7080;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    td {
+      color: #252A31;
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
   }
 }
