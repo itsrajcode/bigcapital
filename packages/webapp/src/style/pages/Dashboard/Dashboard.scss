@@ -23,20 +23,11 @@ $dashboard-views-bar-height: 44px;
     &-sidebar-toggle {
       display: flex;
       align-items: center;
-      margin-left: 2px;
-
-      .#{$ns}-button {
-        color: #6b8193;
-
-        &,
-        &:hover,
-        &:focus {
-          border-radius: 0;
-          box-shadow: none;
-          background-color: transparent;
-          border: 0;
-        }
-      }
+      position: absolute;
+      left: 0;
+      right: 18px;
+      top: 5px;
+      
     }
 
     &-navbar {
@@ -109,6 +100,20 @@ $dashboard-views-bar-height: 44px;
 
       span {
         margin: auto;
+      }
+    }
+
+    &-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      h2 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1552c8;
+        margin: 0;
       }
     }
   }
@@ -620,5 +625,11 @@ $dashboard-views-bar-height: 44px;
       font-size: 12px;
       color: #777;
     }
+  }
+}
+
+.dashboard__topbar-navbar {
+  .bp4-navbar-group {
+    gap: 12px;
   }
 }

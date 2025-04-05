@@ -96,91 +96,139 @@ function HomepageContent() {
     { vendor: 'Karan Madlain', value: 'INR 160,000', overdue: '1yr' },
   ];
 
+  const recentActivitiesData = [
+    { type: 'updated', user: 'You', reference: 'INV08/077', details: 'for 1001.0 with cash in hand.', time: '11:40pm' },
+    { type: 'generated', user: 'You', reference: 'Instamojo payment link', customer: 'Aman Verma', amount: '257.64', time: '10:14am' },
+    { type: 'requested', user: 'Aman Gupta', details: 'to release the INV/211 for project "UI/UX Design for mobile App"', time: 'Yesterday' },
+    { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
+    { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
+  ];
+
+  const cashBankBalancesData = [
+    { account: 'Cash in hand', value: '14,288.32' },
+    { account: 'Test', value: '0.00' },
+    { account: 'Citi Bank', value: '-4,764.62' },
+    { account: 'HDFC', value: '-5,236,743.86' },
+    { account: 'SBI Bank', value: '523.99' },
+    { account: 'Standard Chartered Bank', value: '1,856.43' },
+    { account: 'Xyz', value: '-77.38' },
+  ];
+
   return (
-    <div className="homepage__analytics">
-      <div className="analytics__overview">
-        <div className="overview__header">
-          <h2 className="overview__title">Income and Expense Overview</h2>
-          <button className="overview__period-selector">
-            Last 6 Months
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path
-                d="M3 4.5L6 7.5L9 4.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div className="overview__stats">
-          <div className="stats__income">
-            <div className="stats__icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path
-                  d="M7 3V11M7 3L4 6M7 3L10 6"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
+    <div className="homepage__analytics" style={{ backgroundColor: '#f8f7f7' }}>
+      <div className="dashboard__main-content">
+        {/* Left column */}
+        <div className="dashboard__left-column">
+          {/* Income and Expense Overview */}
+          <div className="analytics__overview">
+            <div className="overview__header">
+              <h2 className="overview__title">Income and Expense Overview</h2>
+              <button className="overview__period-selector">
+                Last 6 Months
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M3 4.5L6 7.5L9 4.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
             </div>
-            <span>Income: INR {totalIncome.toLocaleString()}</span>
-          </div>
-          <div className="stats__expense">
-            <div className="stats__icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path
-                  d="M7 11V3M7 11L4 8M7 11L10 8"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <span>Expense: INR {totalExpense.toLocaleString()}</span>
-          </div>
-        </div>
 
-        <div style={{ width: '100%', height: 300 }}>
-          <IncomeExpenseChart data={incomeData} />
-        </div>
-      </div>
-
-      <div className="analytics__charts">
-        <div className="chart__container">
-          <TopSellingChart data={topSellingData} />
-        </div>
-        
-        <div className="chart__container">
-          <TopSellingItemsChart data={topSellingItemsData} />
-        </div>
-      </div>
-
-      <div className="analytics__invoices">
-        <h2 className="invoices__title">Invoices By Status</h2>
-        <div className="invoices__chart-container">
-          <div className="chart__wrapper">
-            <InvoiceStatusChart data={invoiceStatusData} />
-          </div>
-          <div className="chart__legend">
-            {invoiceStatusData.map((entry, index) => (
-              <div key={index} className="legend__item">
-                <span
-                  className="legend__marker"
-                  style={{ backgroundColor: entry.color }}
-                />
-                <span className="legend__label">{entry.name}</span>
-                <span className="legend__value">
-                  {entry.value.toString().padStart(2, '0')}
-                </span>
+            <div className="overview__stats">
+              <div className="stats__income">
+                <div className="stats__icon">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M7 3V11M7 3L4 6M7 3L10 6"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+                <span>Income: INR {totalIncome.toLocaleString()}</span>
               </div>
-            ))}
+              <div className="stats__expense">
+                <div className="stats__icon">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M7 11V3M7 11L4 8M7 11L10 8"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+                <span>Expense: INR {totalExpense.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div style={{ width: '100%', height: 300 }}>
+              <IncomeExpenseChart data={incomeData} />
+            </div>
+          </div>
+
+          {/* Top 10 Selling Items */}
+          <div className="chart__container">
+            <TopSellingItemsChart data={topSellingItemsData} />
+          </div>
+        </div>
+
+        {/* Right column */}
+        <div className="dashboard__right-column">
+          {/* Recent Activities */}
+          <div className="recent-activities">
+            <div className="section-header">
+              <h2>Recent Activities</h2>
+            </div>
+            <div className="activities-list">
+              {recentActivitiesData.map((activity, index) => (
+                <div key={index} className="activity-item">
+                  <div className="activity-avatar">{/* Avatar icon would go here */}</div>
+                  <div className="activity-content">
+                    <div className="activity-text">
+                      {activity.user} {activity.type} {activity.reference}
+                      {activity.customer && ` for customer ${activity.customer}`}
+                      {activity.amount && ` for amount ${activity.amount}`}
+                      {activity.details && ` ${activity.details}`}
+                    </div>
+                    <div className="activity-time">{activity.time}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="view-all-button">View All Activities</button>
+          </div>
+
+          {/* Invoices By Status */}
+          <div className="analytics__invoices">
+            <h2 className="invoices__title">Invoices By Status</h2>
+            <div className="invoices__chart-container">
+              <div className="chart__wrapper">
+                <InvoiceStatusChart data={invoiceStatusData} />
+              </div>
+              <div className="chart__legend">
+                {invoiceStatusData.map((entry, index) => (
+                  <div key={index} className="legend__item">
+                    <span
+                      className="legend__marker"
+                      style={{ backgroundColor: entry.color }}
+                    />
+                    <span className="legend__label">{entry.name}</span>
+                    <span className="legend__value">
+                      {entry.value.toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Tables section - full width */}
       <div className="analytics__tables">
         <DataSummaryTable
           title="Top 5 Unpaid Invoices"
@@ -200,6 +248,23 @@ function HomepageContent() {
             { key: 'overdue', label: 'Overdue' }
           ]}
           data={payablesData}
+        />
+
+        <DataSummaryTable
+          title="Cash and Bank Balances"
+          columns={[
+            { key: 'account', label: 'Account' },
+            { 
+              key: 'value', 
+              label: 'Value(INR)',
+              render: (value) => (
+                <span className={parseFloat(value.replace(/,/g, '')) < 0 ? 'negative-value' : ''}>
+                  {value}
+                </span>
+              )
+            }
+          ]}
+          data={cashBankBalancesData}
         />
       </div>
     </div>

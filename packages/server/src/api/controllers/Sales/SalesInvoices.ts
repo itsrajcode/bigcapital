@@ -492,6 +492,7 @@ export default class SaleInvoicesController extends BaseController {
         saleInvoiceId,
         user
       );
+      // console.log("dfdsfds" ,saleInvoice)
       return res.status(200).send({ saleInvoice });
     }
   }
@@ -502,6 +503,7 @@ export default class SaleInvoicesController extends BaseController {
     next: NextFunction
   ) {
     const { tenantId } = req;
+    console.log(tenantId)
 
     try {
       const data = await this.saleInvoiceApplication.getSaleInvoiceState(

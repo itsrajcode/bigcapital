@@ -235,4 +235,24 @@ export const defaultInvoicePdfTemplateAttributes = {
   // # Statement
   statementLabel: 'Statement',
   showStatement: true,
+
+  minimalBasicTemplate: {
+    primaryColor: '#000000',
+    secondaryColor: '#000000',
+    showCompanyLogo: false,
+    showCustomerAddress: false,
+    showCompanyAddress: false,
+    showDateIssue: false,
+    showDueDate: false,
+    showInvoiceNumber: false,
+    showTotal: false,
+    showSubtotal: false,
+    showDiscount: false,
+    showTaxes: false,
+    showPaymentMade: false,
+    showDueAmount: false,
+    showTermsConditions: false,
+    showStatement: false,
+    bigtitle: "It's working"
+  }
 };

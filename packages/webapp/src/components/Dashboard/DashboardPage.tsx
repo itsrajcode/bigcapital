@@ -35,7 +35,7 @@ function DashboardPage({
     pageTitle && changePageTitle(pageTitle);
 
     return () => {
-      pageTitle && changePageTitle('');
+      "pageTitle" && changePageTitle('');
     };
   });
 

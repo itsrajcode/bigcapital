@@ -11,6 +11,42 @@ exports.up = function (knex) {
       default: true,
     },
     {
+      resource: 'SaleInvoice',
+      templateName: 'New template one',
+      predefined: true,
+      default: false,
+    },
+    {
+      resource: 'SaleInvoice',
+      templateName: 'Modern Template',
+      predefined: true,
+      default: false,
+    },
+    {
+      resource: 'SaleInvoice',
+      templateName: 'Classic Template',
+      predefined: true,
+      default: false,
+    },
+    {
+      resource: 'SaleInvoice',
+      templateName: 'Minimalist Template',
+      predefined: true,
+      default: false,
+    },
+    {
+      resource: 'SaleInvoice',
+      templateName: 'Basic Template',
+      predefined: true,
+      default: false,
+    },
+    {
+      resource: 'SaleInvoice',
+      templateName: 'Minimal Basic Template',
+      predefined: true,
+      default: false,
+    },
+    {
       resource: 'SaleEstimate',
       templateName: 'Standard Template',
       predefined: true,

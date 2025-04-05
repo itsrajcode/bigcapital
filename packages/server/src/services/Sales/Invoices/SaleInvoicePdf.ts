@@ -1,7 +1,9 @@
 import { Inject, Service } from 'typedi';
 import {
   renderInvoicePaperTemplateHtml,
+  renderMinimalBasicTemplateHtml,
   InvoicePaperTemplateProps,
+  MinimalBasicTemplate,
 } from '@bigcapital/pdf-templates';
 import { ChromiumlyTenancy } from '@/services/ChromiumlyTenancy/ChromiumlyTenancy';
 import { GetSaleInvoice } from './GetSaleInvoice';
@@ -10,6 +12,7 @@ import { transformInvoiceToPdfTemplate } from './utils';
 import { SaleInvoicePdfTemplate } from './SaleInvoicePdfTemplate';
 import { EventPublisher } from '@/lib/EventPublisher/EventPublisher';
 import events from '@/subscribers/events';
+/* import MinimalBasicTemplate  from '@/shared/pdf-templates/components/MinimalBasicTemplate' */;
 
 @Service()
 export class SaleInvoicePdf {
@@ -42,9 +45,17 @@ export class SaleInvoicePdf {
       tenantId,
       invoiceId
     );
-    return renderInvoicePaperTemplateHtml({
-      ...brandingAttributes,
-    });
+    console.log('brandingAttributes', brandingAttributes);
+    if(brandingAttributes.templateName === 'Minimal Basic Template') {
+      console.log("fhir ek baar")
+      const data =  renderMinimalBasicTemplateHtml()
+      console.log("MINI",data)
+      return data
+    }
+    const data =  renderInvoicePaperTemplateHtml(brandingAttributes);
+    console.log("data",data)
+    return data;
+   
   }
 
   /**
@@ -104,27 +115,41 @@ export class SaleInvoicePdf {
     invoiceId: number
   ): Promise<InvoicePaperTemplateProps> {
     const { PdfTemplate } = this.tenancy.models(tenantId);
-
+    console.log("data form backend",PdfTemplate)
+    // Get the invoice from the database.
     const invoice = await this.getInvoiceService.getSaleInvoice(
       tenantId,
       invoiceId
     );
-    // Retrieve the invoice template id of not found get the default template id.
-    const templateId =
-      invoice.pdfTemplateId ??
-      (
-        await PdfTemplate.query().findOne({
-          resource: 'SaleInvoice',
-          default: true,
-        })
-      )?.id;
+    
+    // Add minimal basic template option
+    const templateId = invoice.pdfTemplateId ?? (
+      await PdfTemplate.query().findOne({
+        resource: 'SaleInvoice',
+        templateName: 'Minimal Basic Template' // or default: true for default
+      })
+    )?.id;
+    
     //  Getting the branding template attributes.
     const brandingTemplate =
       await this.invoiceBrandingTemplateService.getInvoicePdfTemplate(
         tenantId,
         templateId
       );
+
+      console.log("templateId",brandingTemplate.templateName)
     // Merge the branding template attributes with the invoice.
+    if (brandingTemplate.templateName === 'Minimal Basic Template') {
+      console.log("hsdgfjhgsd")
+      const minimalTemplateProps = {
+        ...brandingTemplate.attributes,
+        ...transformInvoiceToPdfTemplate(invoice),
+      };
+      
+      // Pass the merged data to the render function
+      minimalTemplateProps['templateName'] = brandingTemplate.templateName;
+      return minimalTemplateProps
+    }
     return {
       ...brandingTemplate.attributes,
       ...transformInvoiceToPdfTemplate(invoice),

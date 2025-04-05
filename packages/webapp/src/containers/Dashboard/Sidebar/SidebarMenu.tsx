@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Menu } from '@blueprintjs/core';
+import { Menu, MenuDivider } from '@blueprintjs/core';
 
 import { MenuItem, MenuItemLabel, Icon } from '@/components';
 import { ISidebarMenuItemType } from '@/containers/Dashboard/Sidebar/interfaces';
@@ -31,6 +31,7 @@ function SidebarMenuItem({ item, index, sidebarExpended }) {
       onClick={item.onClick}
       active={isActive}
       hasSubmenu={item.hasChildren}
+      className={item.children ? 'has-submenu' : ''}
     />
   );
 }
@@ -68,7 +69,15 @@ export function SidebarMenu({ menu }) {
     <div>
       <Menu className="sidebar-menu">
         {menu.map((item, index) => (
-          <SidebarMenuItemComposerWithDashboard key={index} index={index} item={item} />
+          <React.Fragment key={index}>
+            <SidebarMenuItemComposerWithDashboard index={index} item={item} />
+            {/* Add dividers after specific menu items */}
+            {(item.text && item.text.props && item.text.props.id === 'sidebar.homepage') || 
+             (item.text && item.text.props && item.text.props.id === 'sidebar.contacts') || 
+             (item.text && item.text.props && item.text.props.id === 'sidebar.reports') ? (
+              <MenuDivider className="menu-divider" />
+            ) : null}
+          </React.Fragment>
         ))}
       </Menu>
     </div>

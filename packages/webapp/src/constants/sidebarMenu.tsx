@@ -39,6 +39,7 @@ export const SidebarMenu = [
     disabled: false,
     href: '/',
     matchExact: true,
+    'data-menu-id': 'dashboard',
   },
   // ---------------
   // # Sales & Inventory
@@ -323,6 +324,7 @@ export const SidebarMenu = [
     type: ISidebarMenuItemType.Overlay,
     overlayId: ISidebarMenuOverlayIds.Contacts,
     icon: 'contact_sidebar',
+    'data-menu-id': 'contacts',
     children: [
       {
         text: <T id={'sidebar.contacts'} />,
@@ -628,6 +630,7 @@ export const SidebarMenu = [
     type: ISidebarMenuItemType.Overlay,
     overlayId: ISidebarMenuOverlayIds.Reports,
     icon: 'reports_sidebar',
+    'data-menu-id': 'reports',
     children: [
       {
         text: <T id={'sidebar.reports'} />,

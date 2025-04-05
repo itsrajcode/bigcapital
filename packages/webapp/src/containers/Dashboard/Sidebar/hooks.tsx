@@ -201,14 +201,20 @@ function useBindSidebarItemDialogClick() {
  * Binds click action for the sidebar overlay item.
  */
 function useBindSidebarItemOverlayClick() {
-  const { toggleSidebarSubmenu, closeSidebarSubmenu } =
-    useSidebarSubmnuActions();
+  const { toggleSidebarSubmenu, closeSidebarSubmenu } = useSidebarSubmnuActions();
+  const { submenuId } = useSidebarSubmenu();
 
-  // Handle sidebar item click.
   const onClick = (item) => (event) => {
-    closeSidebarSubmenu();
-    toggleSidebarSubmenu({ submenuId: item.overlayId });
+    if (submenuId === item.overlayId) {
+      // If clicking the same item, close it
+      closeSidebarSubmenu();
+    } else {
+      // If clicking a different item, close current and open new one
+      closeSidebarSubmenu();
+      toggleSidebarSubmenu({ submenuId: item.overlayId });
+    }
   };
+
   return {
     bindOnClick: (item) => {
       return {

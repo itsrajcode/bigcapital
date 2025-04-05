@@ -44,16 +44,16 @@ export const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = ({ data
 // Helper function to get emoji icons based on item name
 const getItemIcon = (name: string): string => {
   const iconMap: { [key: string]: string } = {
-    'Macbook Pro (13inch)': '💻',
-    'Kids Wear frock': '👗',
-    'Power Bank': '🔋',
-    'Iphone 16 pro Ultra': '📱',
-    "Men's Professional Suit": '👔',
-    "Sheesham TV's Stand": '📺',
-    'LG Microwave': '🔥',
-    'Boat Rocker Head Set': '🎧',
-    'Samsung s39 pro Ultra': '📱',
-    'Bosch Washing Machine': '🧺'
+    'Macbook Pro (13inch)': '',
+    'Kids Wear frock': '',
+    'Power Bank': '',
+    'Iphone 16 pro Ultra': '',
+    "Men's Professional Suit": '',
+    "Sheesham TV's Stand": '',
+    'LG Microwave': '',
+    'Boat Rocker Head Set': '',
+    'Samsung s39 pro Ultra': '',
+    'Bosch Washing Machine': ''
   };
 
   return iconMap[name] || '📦';

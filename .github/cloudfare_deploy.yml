@@ -1,0 +1,35 @@
+on:
+  push:
+    branches: [ "master" ]  # Runs ONLY when code is pushed to main branch
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: |
+          pnpm install
+
+      - name: Build Web App
+        run: |
+          pnpm run build:webapp
+
+        run: |
+          echo "Deploying to Cloudflare Pages..."
+          echo "API Token: ${{ secrets.CLOUDFLARE_API_TOKEN }}"
+          echo "Account ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+          echo "Project Name: bookeasy"
+          echo "Directory: packages/webapp/build"
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: "bookeasy"  # Replace with your actual project name
+          directory: "packages/webapp/build"  # Your build folder (e.g. 'build', 'public')

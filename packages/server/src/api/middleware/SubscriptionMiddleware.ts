@@ -7,7 +7,7 @@ export default (subscriptionSlug = 'main') =>
   async (req: Request, res: Response, next: NextFunction) => {
     const { tenant, tenantId } = req;
     const { subscriptionRepository } = Container.get('repositories');
-
+    
     if (!tenant) {
       throw new Error('Should load `TenancyMiddlware` before this middleware.');
     }

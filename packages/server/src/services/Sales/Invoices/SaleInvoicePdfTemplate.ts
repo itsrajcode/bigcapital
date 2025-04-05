@@ -23,6 +23,17 @@ export class SaleInvoicePdfTemplate {
       tenantId,
       invoiceTemplateId
     );
+    if (template.templateName === 'Minimal Basic Template') {
+      return {
+        ...template,
+        attributes: {
+          ...defaultInvoicePdfTemplateAttributes.minimalBasicTemplate,
+          ...template.attributes,
+          bigtitle: "It's working"
+        }
+      };
+    }
+
     // Retrieves the organization branding attributes.
     const commonOrgBrandingAttrs =
       await this.getOrgBrandingAttributes.getOrganizationBrandingAttributes(

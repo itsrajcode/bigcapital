@@ -3,6 +3,7 @@ import { Features } from '@/interfaces';
 
 export const FeatureActivationGuard =
   (feature: Features) => (req: Request, res: Response, next: Function) => {
+    console.log(req.settings)
     const { settings } = req;
 
     const isActivated = settings.get({ group: 'features', key: feature });

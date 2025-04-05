@@ -75,7 +75,8 @@ function DashboardTopbar({
   return (
     <div class="dashboard__topbar" data-testId={'dashboard-topbar'}>
       <div class="dashboard__topbar-left">
-        <div class="dashboard__topbar-sidebar-toggle">
+        {/* Remove or comment out the hamburger button section */}
+        {/* <div class="dashboard__topbar-sidebar-toggle">
           <Tooltip
             content={
               !sidebarExpended ? (
@@ -88,39 +89,20 @@ function DashboardTopbar({
           >
             <DashboardHamburgerButton onClick={handleSidebarToggleBtn} />
           </Tooltip>
-        </div>
+        </div> */}
         <DashboardTopbarSubscriptionMessage />
-        <div class="dashboard__title">
-          <h1>{pageTitle}</h1>
-
-          <If condition={pageHint}>
-            <div class="dashboard__hint">
-              <Hint content={pageHint} />
-            </div>
-          </If>
-
-          <If condition={editViewId}>
-            <Button
-              className={Classes.MINIMAL + ' button--view-edit'}
-              icon={<Icon icon="pen" iconSize={13} />}
-              onClick={handlerClickEditView}
-            />
-          </If>
-        </div>
-
-        <div class="dashboard__breadcrumbs">
-          <DashboardBreadcrumbs />
-        </div>
-        <DashboardBackLink />
       </div>
-
+      
+      <div class="dashboard__topbar-center">
+        <h2>EaseBooks</h2>
+      </div>
+      
       <div class="dashboard__topbar-right">
         <Navbar class="dashboard__topbar-navbar">
           <NavbarGroup>
             <DashboardQuickSearchButton
               onClick={() => openGlobalSearch(true)}
             />
-            <QuickNewDropdown />
 
             <Tooltip
               content={<T id={'notifications'} />}
@@ -128,9 +110,11 @@ function DashboardTopbar({
             >
               <Button
                 className={Classes.MINIMAL}
-                icon={<Icon icon={'notification-24'} iconSize={20} />}
+                icon={<Icon icon={'notification-24'} iconSize={20} color="#666D80"/>}
               />
             </Tooltip>
+
+            <QuickNewDropdown />
 
             <Popover2
               content={
@@ -154,11 +138,6 @@ function DashboardTopbar({
                 </Menu>
               }
             >
-              <Button
-                className={Classes.MINIMAL}
-                icon={<Icon icon={'help-24'} iconSize={20} />}
-                text={<T id={'help'} />}
-              />
             </Popover2>
             <NavbarDivider />
           </NavbarGroup>

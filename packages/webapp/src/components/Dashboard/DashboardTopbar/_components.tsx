@@ -30,9 +30,9 @@ export function DashboardHamburgerButton({ ...props }) {
     <Button minimal={true} {...props}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
         role="img"
         focusable="false"
       >
@@ -40,12 +40,9 @@ export function DashboardHamburgerButton({ ...props }) {
           <T id={'menu'} />
         </title>
         <path
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-miterlimit="5"
-          stroke-width="2"
-          d="M4 7h15M4 12h15M4 17h15"
-        ></path>
+          fill="#0047C3"
+          d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+        />
       </svg>
     </Button>
   );
@@ -64,8 +61,7 @@ export function DashboardQuickSearchButton({ ...rest }) {
   return (
     <Button
       className={Classes.MINIMAL}
-      icon={<Icon icon={'search-24'} iconSize={20} />}
-      text={<T id={'quick_find'} />}
+      icon={<Icon icon={'search-24'} iconSize={20} color={'#666D80'} />}
       {...rest}
     />
   );

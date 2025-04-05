@@ -19,7 +19,9 @@ export class UrlConverter extends Converter implements IConverter {
     pdfFormat?: PdfFormat;
   }): Promise<Buffer> {
     try {
-      const _url = new URL(url);
+      // Ensure the URL is absolute
+      const absoluteUrl = url.startsWith('http') ? url : `http://localhost${url.startsWith('/') ? '' : '/'}${url}`;
+      const _url = new URL(absoluteUrl);
       const data = new FormData();
 
       if (pdfFormat) {

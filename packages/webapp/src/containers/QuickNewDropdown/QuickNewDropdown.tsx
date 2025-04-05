@@ -6,6 +6,8 @@ import { useHistory } from 'react-router-dom';
 import { Icon } from '@/components';
 import { Position } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
+import { css } from '@emotion/css';
+import { Intent } from '@blueprintjs/core';
 
 import { useGetQuickNewMenu } from '@/constants/quickNewOptions';
 
@@ -42,7 +44,20 @@ export default function QuickNewDropdown() {
       <Button
         text={<T id={'quick_new'} />}
         icon={<Icon icon={'plus-24'} iconSize={20} />}
-        minimal={true}
+        intent={Intent.PRIMARY}
+        className={css`
+          &.bp4-button.bp4-intent-primary {
+            width: 124px;
+            height: 40px;
+            background-color: #0052cc;
+            color: white;
+            padding: 9px 13px;
+            border-radius: 5px;
+            &:hover {
+              background-color: #004bb3;
+            }
+          }
+        `}
       />
     </Select>
   );

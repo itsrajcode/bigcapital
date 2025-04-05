@@ -1,12 +1,22 @@
 @import 'src/style/_base.scss';
 
 .sidebar {
-  background: #124BBA;
+  background: #313ca7;
   width: $sidebar-width;
   color: $sidebar-text-color;
   height: 100%;
   z-index: $sidebar-zindex;
   position: relative;
+
+  &:after {
+    content: "";
+    position: absolute;
+    right: -25px;
+    top: 7%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
 
   .ScrollbarsCustom-Track {
 
@@ -41,7 +51,8 @@
   }
 
   &__head {
-    padding: 20px 20px;
+    background: white;
+    padding: 15px 20px;
 
     &-logo {
       position: absolute;
@@ -57,17 +68,17 @@
 
     &-organization {
       .title {
-        background: transparent;
+        background: white;
         padding: 0;
         min-height: auto;
         min-width: auto;
         max-width: 100%;
         font-weight: 600;
         outline: 0;
-        font-size: 15px;
+        font-size: 24px;
 
         &:not([class*="bp4-intent-"]):not(.bp4-minimal) {
-          color: rgb(255, 255, 255);
+          color: #000000;
         }
 
         &:hover,
@@ -78,7 +89,7 @@
         }
 
         .bp4-button-text {
-          margin-right: 4px;
+          padding-bottom: 2px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
@@ -95,17 +106,11 @@
         max-width: 100%;
         display: inline-block;
       }
-
-      .subtitle {
-        display: block;
-        font-size: 12px;
-        margin-top: 8px;
-        color: rgba(255, 255, 255, 0.6);
-      }
     }
 
     .sidebar__head-logo {
       transition: transform 0.05s ease-in-out;
+      background-color: white;
     }
 
     .is-subscription-inactive:not(.sidebar--mini-sidebar) & {
@@ -136,6 +141,17 @@
     min-width: $sidebar-width;
     border-radius: 0;
     padding-bottom: 2rem;
+
+    .menu-divider {
+      height: 1px;
+      margin: 8px 20px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .#{$ns}-menu-divider {
+      border-top-color: rgba(255, 255, 255, 0.2);
+      margin: 8px 20px;
+    }
 
     .#{$ns}-menu-item {
       color: $sidebar-menu-item-color;
@@ -187,6 +203,46 @@
       &:hover .bp4-button.menu-item__add-btn {
         display: inline-block;
       }
+
+      &.has-submenu:after {
+        content: '›';
+        position: absolute;
+        right: 15px;
+        font-size: 20px;
+      }
+
+      // Group separators
+      &[data-menu-id="dashboard"],
+      &[data-menu-id="contacts"],
+      &[data-menu-id="reports"] {
+        position: relative;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          left: 20px;
+          right: 20px;
+          height: 1px;
+          background: #534DC1
+        }
+      }
+
+      &[data-menu-id="financials"],
+      &[data-menu-id="expenses"],
+      &[data-menu-id="preferences"] {
+        position: relative;
+        margin-top: 12px;
+        
+        &:before {
+          content: '';
+          position: absolute;
+          top: -6px;
+          left: 20px;
+          right: 20px;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
     }
 
     .#{$ns}-submenu {
@@ -226,12 +282,6 @@
 
     .#{$ns}-popover-target.#{$ns}-popover-open .#{$ns}-menu-item {
       color: $sidebar-menu-item-color;
-    }
-
-    .#{$ns}-menu-divider {
-      border-top-color: rgba(255, 255, 255, 0.1);
-      color: #6b708c;
-      margin: 4px 0;
     }
 
     .#{$ns}-menu-spacer {

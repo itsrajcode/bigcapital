@@ -4,9 +4,11 @@ import {
   InvoicePaperTemplate,
   InvoicePaperTemplateProps,
 } from './InvoicePaperTemplate';
+import { MinimalBasicTemplate } from './MinimalBasicInvoice';
 import { useElementCustomizeContext } from '@/containers/ElementCustomize/ElementCustomizeProvider';
 import { InvoiceCustomizeFormValues } from './types';
 import { Box } from '@/components';
+import { useBrandingTemplateBoot } from '@/containers/BrandingTemplates/BrandingTemplateBoot';
 
 /**
  * Injects the `InvoicePaperTemplate` component props from the form and branding states.
@@ -19,14 +21,20 @@ const withInvoicePreviewTemplateProps = <P extends object>(
   return (props: Omit<P, keyof InvoicePaperTemplateProps>) => {
     const { values } = useFormikContext<InvoiceCustomizeFormValues>();
     const { brandingState } = useElementCustomizeContext();
+    const { pdfTemplate } = useBrandingTemplateBoot();
 
     const mergedProps: InvoicePaperTemplateProps = {
       ...brandingState,
       ...values,
     };
+
     return (
       <Box px={4} py={6}>
-        <Component {...(props as P)} {...mergedProps} />
+        {pdfTemplate?.templateName === 'Minimal Basic Template' ? (
+          <MinimalBasicTemplate {...(props as P)} {...mergedProps} />
+        ) : (
+          <Component {...(props as P)} {...mergedProps} />
+        )}
       </Box>
     );
   };

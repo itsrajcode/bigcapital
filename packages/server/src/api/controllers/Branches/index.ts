@@ -21,6 +21,10 @@ export class BranchesController extends BaseController {
 
     router.post(
       '/activate',
+      (req, res, next)=>{
+        console.log("dfsdfsd")
+        next()
+      },
       [],
       this.validationResult,
       this.asyncMiddleware(this.activateBranches),

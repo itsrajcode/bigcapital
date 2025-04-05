@@ -24,7 +24,7 @@ interface BrandingTemplateProps {
   children: React.ReactNode;
 }
 
-const PdfTemplateContext = createContext<PdfTemplateContextValue>(
+export const PdfTemplateContext = createContext<PdfTemplateContextValue>(
   {} as PdfTemplateContextValue,
 );
 
@@ -36,7 +36,7 @@ export const BrandingTemplateBoot = ({
     useGetPdfTemplate(templateId, {
       enabled: !!templateId,
     });
-  // Retrieves the branding template state.
+  
   const { data: brandingTemplateState, isLoading: isBrandingTemplateLoading } =
     useGetPdfTemplateBrandingState();
 
@@ -47,11 +47,11 @@ export const BrandingTemplateBoot = ({
   if (isLoading) {
     return <Spinner size={20} />;
   }
+
   const value = {
     templateId,
     pdfTemplate,
     isPdfTemplateLoading,
-
     brandingTemplateState,
     isBrandingTemplateLoading,
   };

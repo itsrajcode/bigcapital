@@ -16,7 +16,7 @@ function SidebarContainerJSX({
 }) {
   const sidebarScrollerRef = React.useRef();
 
-  // Always set sidebarExpended to true (or false if you want it always collapsed)
+  // Set sidebarExpended to true to match your screenshot
   const sidebarExpended = true;
 
   useObserveSidebarExpendedBodyclass(sidebarExpended);
@@ -42,13 +42,11 @@ function SidebarContainerJSX({
 
   return (
     <div
-      className={classNames('sidebar', {
-        'sidebar--mini-sidebar': !sidebarExpended,
-      })}
+      className="sidebar"
       id="sidebar"
       onMouseLeave={handleSidebarMouseLeave}
     >
-      <div className={'sidebar__scroll-wrapper'}>
+      <div className="sidebar__scroll-wrapper">
         <Scrollbar
           noDefaultStyles={true}
           scrollerProps={{ elementRef: scrollerElementRef }}

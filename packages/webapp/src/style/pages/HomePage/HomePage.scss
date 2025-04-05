@@ -378,3 +378,263 @@
     }
   }
 }
+
+// Dashboard layout using CSS Grid
+.homepage__analytics {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+  
+  .dashboard__main-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr; // Left column takes 2/3, right takes 1/3
+    gap: 24px;
+  }
+  
+  .dashboard__left-column,
+  .dashboard__right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  // Analytics overview styles
+  .analytics__overview {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    .overview__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      .overview__title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
+      
+      .overview__period-selector {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background-color: #f5f7fa;
+        border: 1px solid #e1e5eb;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    }
+    
+    .overview__stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      
+      .stats__income, .stats__expense {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        
+        .stats__icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+        }
+      }
+      
+      .stats__income .stats__icon {
+        background-color: #00CB65;
+      }
+      
+      .stats__expense .stats__icon {
+        background-color: #1248BA;
+      }
+    }
+  }
+  
+  // Chart container styles
+  .chart__container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+    }
+  }
+  
+  // Recent activities styles
+  .recent-activities {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    .section-header {
+      margin-bottom: 16px;
+      
+      h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+    
+    .activities-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      
+      .activity-avatar {
+        width: 32px;
+        height: 32px;
+        background-color: #f0f2f5;
+        border-radius: 50%;
+      }
+      
+      .activity-content {
+        flex: 1;
+        
+        .activity-text {
+          font-size: 14px;
+          line-height: 1.4;
+        }
+        
+        .activity-time {
+          font-size: 12px;
+          color: #6c757d;
+          margin-top: 4px;
+        }
+      }
+    }
+    
+    .view-all-button {
+      margin-top: 16px;
+      width: 100%;
+      background-color: #f5f7fa;
+      border: 1px solid #e1e5eb;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 14px;
+      color: #1248BA;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+  }
+  
+  // Invoices styles
+  .analytics__invoices {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    .invoices__title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+    }
+    
+    .invoices__chart-container {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      
+      .chart__wrapper {
+        flex: 1;
+      }
+      
+      .chart__legend {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        
+        .legend__item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .legend__marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+          }
+          
+          .legend__label {
+            flex: 1;
+            font-size: 14px;
+          }
+          
+          .legend__value {
+            font-weight: 600;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+  
+  // Tables styles
+  .analytics__tables {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  quick_new
+  // Cash and Bank Balances
+  .cash-bank-balances {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+    }
+    
+    .balances-table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 12px 8px;
+        text-align: left;
+        border-bottom: 1px solid #e1e5eb;
+        font-size: 14px;
+      }
+      
+      th {
+        font-weight: 600;
+        color: #6c757d;
+        background-color: #f8f9fa;
+      }
+      
+      .negative-value {
+        color: #dc3545;
+      }
+    }
+  }
+}
