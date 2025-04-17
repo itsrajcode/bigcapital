@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 import { Service, Inject } from 'typedi';
+import moment from 'moment';
 import {
   IProjectEditDTO,
   IProjectEditedEventPayload,
@@ -40,21 +41,30 @@ export default class EditProjectService {
   ): Promise<IProjectEditPOJO> => {
     const { Project } = this.tenancy.models(tenantId);
 
+    // Create a copy of the DTO to avoid modifying the original
+    const updatedDTO = { ...projectDTO };
+
+    // Format the deadline date to YYYY-MM-DD
+    if (updatedDTO.deadline) {
+      const formattedDate = moment(updatedDTO.deadline).format('YYYY-MM-DD');
+      updatedDTO.deadline = formattedDate;
+    }
+
     // Validate customer existance.
     const oldProject = await Project.query().findById(projectId).throwIfNotFound();
-
+    
     // Validate the project's contact id existance.
-    if (oldProject.contactId !== projectDTO.contactId) {
+    if (oldProject.contactId !== updatedDTO.contactId) {
       await this.projectsValidator.validateContactExists(
         tenantId,
-        projectDTO.contactId
+        updatedDTO.contactId
       );
     }
     // Triggers `onProjectEdit` event.
     await this.eventPublisher.emitAsync(events.project.onEdit, {
       tenantId,
       oldProject,
-      projectDTO,
+      projectDTO: updatedDTO,
     } as IProjectEditEventPayload);
 
     // Edits the given project under unit-of-work envirement.
@@ -62,7 +72,7 @@ export default class EditProjectService {
       // Triggers `onProjectEditing` event.
       await this.eventPublisher.emitAsync(events.project.onEditing, {
         tenantId,
-        projectDTO,
+        projectDTO: updatedDTO,
         oldProject,
         trx,
       } as IProjectEditingEventPayload);
@@ -70,14 +80,14 @@ export default class EditProjectService {
       // Upsert the project object.
       const project = await Project.query(trx).upsertGraph({
         id: projectId,
-        ...projectDTO,
+        ...updatedDTO,
       });
       // Triggers `onProjectEdited` event.
       await this.eventPublisher.emitAsync(events.project.onEdited, {
         tenantId,
         oldProject,
         project,
-        projectDTO,
+        projectDTO: updatedDTO,
         trx,
       } as IProjectEditedEventPayload);
 

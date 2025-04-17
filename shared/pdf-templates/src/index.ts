@@ -10,4 +10,3 @@ export * from './renders/render-estimate-paper-template';
 export * from './renders/render-receipt-paper-template';
 export * from './renders/render-payment-received-paper-template';
 export * from './renders/render-minimal-basic-template';
-export * from './renders/direct-template-renderer;

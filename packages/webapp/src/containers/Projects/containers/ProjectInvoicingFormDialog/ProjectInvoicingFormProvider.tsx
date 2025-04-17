@@ -11,11 +11,13 @@ const ProjectInvoicingFormContext = React.createContext();
 function ProjectInvoicingFormProvider({
   // #ownProps
   dialogName,
+  project,
   ...props
 }) {
   // State provider.
   const provider = {
     dialogName,
+    project,
   };
 
   return (

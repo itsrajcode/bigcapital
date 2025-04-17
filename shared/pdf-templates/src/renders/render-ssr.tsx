@@ -5,12 +5,14 @@ import { OpenSansFontLink } from '../constants';
 import { PaperTemplateLayout } from '../components/PaperTemplateLayout';
 
 export const renderSSR = (children: React.ReactNode) => {
-
+  const key = 'invoice-paper-template';
+  const cache = createCache({ key });
 
   const renderedHtml = renderToString(
-    <PaperTemplateLayout>{children}</PaperTemplateLayout>
+    <PaperTemplateLayout cache={cache}>{children}</PaperTemplateLayout>
   );
   const extractedHtml = extractCritical(renderedHtml);
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>

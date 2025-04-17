@@ -7,18 +7,21 @@ const theme = {
   ...defaultTheme,
 };
 export function PaperTemplateLayout({
-  
+  cache,
   children,
 }: {
   children: React.ReactNode;
+  cache: EmotionCache;
 }) {
   return (
+    <CacheProvider value={cache}>
       <ThemeProvider theme={theme}>
         <Preflight />
         <GlobalStyles />
 
         {children}
       </ThemeProvider>
+    </CacheProvider>
   );
 }
 

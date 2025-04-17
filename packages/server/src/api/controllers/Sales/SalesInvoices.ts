@@ -341,6 +341,7 @@ export default class SaleInvoicesController extends BaseController {
   ) {
     const { tenantId, user } = req;
     const saleInvoiceDTO: ISaleInvoiceCreateDTO = this.matchedBodyData(req);
+    const skipTaskHoursUpdate = req.body.skipTaskHoursUpdate || false;
 
     try {
       // Creates a new sale invoice with associated entries.
@@ -348,7 +349,8 @@ export default class SaleInvoicesController extends BaseController {
         await this.saleInvoiceApplication.createSaleInvoice(
           tenantId,
           saleInvoiceDTO,
-          user
+          user,
+          skipTaskHoursUpdate
         );
       return res.status(200).send({
         id: storedSaleInvoice.id,
@@ -378,7 +380,7 @@ export default class SaleInvoicesController extends BaseController {
       // Update the given sale invoice details.
       await this.saleInvoiceApplication.editSaleInvoice(
         tenantId,
-        saleInvoiceId,
+        +saleInvoiceId,
         saleInvoiceOTD,
         user
       );

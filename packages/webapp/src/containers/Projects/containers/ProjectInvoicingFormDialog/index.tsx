@@ -13,7 +13,8 @@ const ProjectInvoicingDialogContent = React.lazy(
  * Project invoicing form dialog.
  * @returns
  */
-function ProjectInvoicingFormDialog({ dialogName, payload: {}, isOpen }) {
+function ProjectInvoicingFormDialog({ dialogName, payload, isOpen }) {
+  const { project } = payload || {};
 
   return (
     <ProjectInvoicingFormDialogRoot
@@ -25,7 +26,7 @@ function ProjectInvoicingFormDialog({ dialogName, payload: {}, isOpen }) {
       style={{ width: '370px' }}
     >
       <DialogSuspense>
-        <ProjectInvoicingDialogContent dialogName={dialogName} />
+        <ProjectInvoicingDialogContent dialogName={dialogName} project={project} />
       </DialogSuspense>
     </ProjectInvoicingFormDialogRoot>
   );

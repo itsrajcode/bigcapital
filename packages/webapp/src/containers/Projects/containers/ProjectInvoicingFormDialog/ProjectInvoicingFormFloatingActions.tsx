@@ -14,29 +14,46 @@ import { compose } from '@/utils';
 function ProjectInvoicingFormFloatingActions({
   // #withDialogActions
   closeDialog,
+  // isSubmitting from parent component
+  isSubmitting: externalIsSubmitting,
 }) {
   // Formik context.
-  const { isSubmitting } = useFormikContext();
+  const { isSubmitting: formikIsSubmitting } = useFormikContext();
+
+  // Use either the external isSubmitting prop or the Formik isSubmitting state
+  const isLoading = externalIsSubmitting || formikIsSubmitting;
 
   // project invoicing form dialog context.
   const { dialogName } = useProjectInvoicingFormContext();
 
   // Handle close button click.
-  const handleCancelBtnClick = () => {
-    closeDialog(dialogName);
-  };
+  const handleCancelBtnClick = React.useCallback(() => {
+    // Only allow closing if not submitting
+    if (!isLoading) {
+      if (dialogName) {
+        closeDialog(dialogName);
+      } else {
+        closeDialog();
+      }
+    }
+  }, [closeDialog, dialogName, isLoading]);
 
   return (
     <div className={Classes.DIALOG_FOOTER}>
       <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-        <Button onClick={handleCancelBtnClick} style={{ minWidth: '85px' }}>
+        <Button 
+          onClick={handleCancelBtnClick} 
+          style={{ minWidth: '85px' }}
+          disabled={isLoading}
+        >
           <T id={'cancel'} />
         </Button>
         <Button
           intent={Intent.PRIMARY}
-          loading={isSubmitting}
+          loading={isLoading}
           style={{ minWidth: '75px' }}
           type="submit"
+          disabled={isLoading}
         >
           <T id={'project_invoicing.label.add'} />
         </Button>

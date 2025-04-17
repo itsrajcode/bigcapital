@@ -316,6 +316,19 @@ export const SidebarMenu = [
       },
     ],
   },
+  {
+    text: <T id={'sidebar.projects'} />,
+    type: ISidebarMenuItemType.Overlay,
+    overlayId: ISidebarMenuOverlayIds.Projects,
+    icon: 'plus',
+    children: [
+      {
+        text: <T id={'sidebar.projects'} />,
+        type: ISidebarMenuItemType.Link,
+        href: '/projects',
+      },
+    ],
+  },
   // ---------------
   // # Contacts
   // ---------------

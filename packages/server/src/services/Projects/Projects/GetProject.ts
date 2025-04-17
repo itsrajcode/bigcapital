@@ -32,12 +32,14 @@ export default class GetProject {
       .modify('totalBillsDetails')
       .modify('totalTasksDetails')
       .throwIfNotFound();
-
+    console.log("project", project)
     // Transformes and returns object.
-    return this.transformer.transform(
+    const data = await this.transformer.transform(
       tenantId,
       project,
       new ProjectDetailedTransformer()
     );
+    console.log("data", data)
+    return data
   };
 }

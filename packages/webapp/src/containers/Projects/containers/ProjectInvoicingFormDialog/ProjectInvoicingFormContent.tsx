@@ -8,11 +8,11 @@ import ProjectInvoicingFormFloatingActions from './ProjectInvoicingFormFloatingA
 /**
  * Project Invoicing form content.
  */
-export default function ProjectInvoicingFormContent() {
+export default function ProjectInvoicingFormContent({ isSubmitting }) {
   return (
     <Form>
       <ProjectInvoicingFormFields />
-      <ProjectInvoicingFormFloatingActions />
+      <ProjectInvoicingFormFloatingActions isSubmitting={isSubmitting} />
     </Form>
   );
 }

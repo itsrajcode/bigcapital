@@ -10,7 +10,7 @@ export default class Project extends mixin(TenantModel, [
   ModelSearchable,
 ]) {
   costEstimate!: number;
-  deadline!: Date;
+  deadline!: Date | string;
 
   /**
    * Table name
@@ -38,6 +38,9 @@ export default class Project extends mixin(TenantModel, [
    */
   static get modifiers() {
     return {
+      formatDates(builder) {
+        builder.select('*').modify('formatDate', 'deadline');
+      },
       totalExpensesDetails(builder) {
         builder
           .withGraphFetched('expenses')

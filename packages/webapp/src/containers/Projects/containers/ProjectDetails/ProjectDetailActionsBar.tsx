@@ -36,7 +36,7 @@ function ProjectDetailActionsBar({
   // #withSettingsActions
   addSetting,
 }) {
-  const { projectId } = useProjectDetailContext();
+  const { projectId, project } = useProjectDetailContext();
   console.table({ projectId })
   // Handle new transaction button click.
   const handleNewTransactionBtnClick = ({ path }) => {
@@ -45,7 +45,7 @@ function ProjectDetailActionsBar({
         openDialog('project-task-form', { projectId });
         break;
       case 'invoincing':
-        openDialog('project-invoicing-form');
+        openDialog('project-invoicing-form', { project: { id: projectId, ...project } });
         break;
       case 'expense':
         openDialog('project-expense-form', { projectId });

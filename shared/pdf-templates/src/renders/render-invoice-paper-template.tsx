@@ -7,5 +7,7 @@ import { renderSSR } from './render-ssr';
 export const renderInvoicePaperTemplateHtml = (
   props: InvoicePaperTemplateProps
 ) => {
-  return renderInvoiceDirectly(props)
+  return renderSSR(
+    <InvoicePaperTemplate {...props} />
+  );
 };

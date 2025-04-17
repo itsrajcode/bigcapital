@@ -11,9 +11,10 @@ import ProjectInvoicingForm from './ProjectInvoicingForm';
 export default function ProjectInvoicingFormDialogContent({
   // #ownProps
   dialogName,
+  project,
 }) {
   return (
-    <ProjectInvoicingFormProvider dialogName={dialogName}>
+    <ProjectInvoicingFormProvider dialogName={dialogName} project={project}>
       <ProjectInvoicingForm />
     </ProjectInvoicingFormProvider>
   );

@@ -20,7 +20,8 @@ export class ProjectBillableTask {
     trx?: Knex.Transaction
   ) => {
     const { Task } = this.tenancy.models(tenantId);
-
+    console.log('taskId', taskId);
+    console.log('invoiceHours', invoiceHours);
     await Task.query(trx)
       .findById(taskId)
       .increment('invoicedHours', invoiceHours);

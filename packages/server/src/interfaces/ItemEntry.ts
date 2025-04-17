@@ -55,13 +55,18 @@ export interface IItemEntryDTO {
   itemId: number;
   landedCost?: boolean;
   warehouseId?: number;
-
+  description?:string;
   projectRefId?: number;
   projectRefType?: ProjectLinkRefType;
   projectRefInvoicedAmount?: number;
 
   taxRateId?: number;
   taxCode?: string;
+
+  quantity?: number;
+  rate?: number;
+  discount?: number;
+  discountType?: string;
 }
 
 export enum ProjectLinkRefType {

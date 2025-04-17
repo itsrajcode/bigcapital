@@ -8,7 +8,7 @@ import loadersFactory from 'loaders';
 
 async function startServer() {
   const app = express();
-  
+   
   // Intiialize all registered loaders.
   await loadersFactory({ expressApp: app });
 }

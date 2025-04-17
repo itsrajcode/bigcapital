@@ -2,6 +2,7 @@
 import React from 'react';
 import intl from 'react-intl-universal';
 import { useFormikContext } from 'formik';
+import moment from 'moment';
 
 import { Classes, Position, FormGroup, ControlGroup } from '@blueprintjs/core';
 import { FastField } from 'formik';
@@ -28,6 +29,7 @@ import { useProjectFormContext } from './ProjectFormProvider';
 function ProjectFormFields() {
   // Formik context.
   const { values } = useFormikContext();
+  
 
   return (
     <div className={Classes.DIALOG_BODY}>
@@ -51,9 +53,10 @@ function ProjectFormFields() {
             className={classNames(CLASSES.FILL, 'form-group--date')}
           >
             <FDateInput
-              {...momentFormatter('YYYY/MM/DD')}
+              {...momentFormatter('YYYY-MM-DD')}
               name="deadline"
-              formatDate={(date) => date.toLocaleString()}
+              formatDate={(date) => moment(date).format('YYYY-MM-DD')}
+              parseDate={(str) => moment(str).toDate()}
               popoverProps={{
                 position: Position.BOTTOM,
                 minimal: true,
@@ -62,12 +65,7 @@ function ProjectFormFields() {
           </FFormGroup>
 
           {/*------------ CheckBox -----------*/}
-          <FFormGroup name={'published'}>
-            <FCheckbox
-              name="published"
-              label={intl.get('projects.dialog.calculator_expenses')}
-            />
-          </FFormGroup>
+         
         </Stack>
 
         {/*------------ Cost Estimate -----------*/}

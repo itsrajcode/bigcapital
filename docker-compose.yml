@@ -48,7 +48,7 @@ services:
         condition: unless-stopped
 
   gotenberg:
-    image: gotenberg/gotenberg:7
+    image: thecodingmachine/gotenberg:6
     ports:
       - "9000:3000"
 

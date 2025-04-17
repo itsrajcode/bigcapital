@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import intl from 'react-intl-universal';
-
+import moment from 'moment';
 import classNames from 'classnames';
 import { CLASSES } from '@/constants/classes';
 import { Classes, Position, FormGroup, ControlGroup } from '@blueprintjs/core';
@@ -27,9 +27,11 @@ function ProjectInvoicingFormFields() {
         className={classNames(CLASSES.FILL, 'form-group--date')}
       >
         <FDateInput
-          {...momentFormatter('YYYY/MM/DD')}
+          {...momentFormatter('YYYY-MM-DD')}
           name="date"
-          formatDate={(date) => date.toLocaleString()}
+          formatDate={(date) => moment(date).format('YYYY-MM-DD')}
+          parseDate={(str) => new Date(str)}
+          defaultValue={new Date()}
           popoverProps={{
             position: Position.BOTTOM,
             minimal: true,

@@ -88,9 +88,9 @@ export default class ItemsEntriesService {
   ) {
     const { Item } = this.tenancy.models(tenantId);
     const itemsIds = itemEntries.map((e) => e.itemId);
-
+    console.log(itemsIds)
     const foundItems = await Item.query().whereIn('id', itemsIds);
-
+    console.log(foundItems)
     const foundItemsIds = foundItems.map((item: IItem) => item.id);
     const notFoundItemsIds = difference(itemsIds, foundItemsIds);
 

@@ -83,17 +83,21 @@ export class SaleInvoiceApplication {
    * @param {number} tenantId
    * @param {ISaleInvoiceCreateDTO} saleInvoiceDTO
    * @param {ITenantUser} authorizedUser
+   * @param {boolean} [skipTaskHoursUpdate=false] - When true, task hours will not be deducted when creating the invoice.
    * @returns {Promise<ISaleInvoice>}
    */
   public createSaleInvoice(
     tenantId: number,
     saleInvoiceDTO: ISaleInvoiceCreateDTO,
-    authorizedUser: ITenantUser
+    authorizedUser: ITenantUser,
+    skipTaskHoursUpdate: boolean = false
   ): Promise<ISaleInvoice> {
     return this.createSaleInvoiceService.createSaleInvoice(
       tenantId,
       saleInvoiceDTO,
-      authorizedUser
+      authorizedUser,
+      undefined,
+      skipTaskHoursUpdate
     );
   }
 

@@ -4,6 +4,7 @@ import { CommonMailOptions, CommonMailOptionsDTO } from './Mailable';
 import { IDynamicListFilter } from '@/interfaces/DynamicFilter';
 import { IItemEntry, IItemEntryDTO } from './ItemEntry';
 import { AttachmentLinkDTO } from './Attachments';
+import { ITenantUser } from './User';
 
 export interface PaymentIntegrationTransactionLink {
   id: number;
@@ -123,8 +124,20 @@ export interface ISaleInvoiceDTO {
   adjustments?: string;
 }
 
-export interface ISaleInvoiceCreateDTO extends ISaleInvoiceDTO {
-  fromEstimateId: number;
+export interface ISaleInvoiceCreateDTO {
+  customerId: number;
+  invoiceDate: Date | string;
+  dueDate: Date | string;
+  projectId?: number;  // Optional project ID
+  entries: IItemEntryDTO[];
+  fromEstimateId?: number;
+  referenceNo?: string;
+  invoiceNo?: string;
+  invoiceMessage?: string;
+  termsConditions?: string;
+  delivered?: boolean;
+  isTaxExclusive?: boolean;
+  exchangeRate?: number;
 }
 
 export interface ISaleInvoiceEditDTO extends ISaleInvoiceDTO {}
@@ -156,7 +169,7 @@ export interface ISaleInvoiceCreatedPayload {
   saleInvoice: ISaleInvoice;
   saleInvoiceDTO: ISaleInvoiceCreateDTO;
   saleInvoiceId: number;
-  authorizedUser: ISystemUser;
+  authorizedUser: ITenantUser;
   trx: Knex.Transaction;
 }
 
@@ -172,7 +185,7 @@ export interface ISaleInvoiceEditedPayload {
   oldSaleInvoice: ISaleInvoice;
   saleInvoiceDTO: ISaleInvoiceEditDTO;
   saleInvoiceId: number;
-  authorizedUser: ISystemUser;
+  authorizedUser: ITenantUser;
   trx: Knex.Transaction;
 }
 

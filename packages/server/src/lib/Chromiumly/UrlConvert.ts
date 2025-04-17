@@ -18,21 +18,25 @@ export class UrlConverter extends Converter implements IConverter {
     properties?: PageProperties;
     pdfFormat?: PdfFormat;
   }): Promise<Buffer> {
+   
     try {
       // Ensure the URL is absolute
-      const absoluteUrl = url.startsWith('http') ? url : `http://localhost${url.startsWith('/') ? '' : '/'}${url}`;
-      const _url = new URL(absoluteUrl);
+      console.log('url', url);
+      const absoluteUrl = url.startsWith('http') ? url : `http://${process.env.MACHINE_IP}${url.startsWith('/') ? '' : '/'}${url}`;
+      const updatedUrl = absoluteUrl.replace('localhost', process.env.MACHINE_IP);
+      console.log('updatedUrl', updatedUrl);
+      const _url = new URL(updatedUrl);
       const data = new FormData();
-
       if (pdfFormat) {
         data.append('pdfFormat', pdfFormat);
       }
-      data.append('url', _url.href);
+      data.append('remoteURL', _url.href);
 
       if (properties) {
         ConverterUtils.injectPageProperties(data, properties);
       }
-      return GotenbergUtils.fetch(this.endpoint, data);
+      const result = await GotenbergUtils.fetch(this.endpoint, data);
+      return result;
     } catch (error) {
       throw error;
     }

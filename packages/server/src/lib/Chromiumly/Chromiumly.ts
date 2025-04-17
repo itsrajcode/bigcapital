@@ -9,7 +9,6 @@ export class Chromiumly {
 
   public static readonly GOTENBERG_DOCS_ENDPOINT =
     process.env.GOTENBERG_DOCS_URL || '';
-
   public static readonly CHROMIUM_ROUTES = {
     url: ChromiumRoute.URL,
     html: ChromiumRoute.HTML,

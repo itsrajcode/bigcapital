@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 export interface IProjectCommonDTO {
   contactId: number;
   name: string;
-  deadline: Date;
+  deadline: Date | string;
   costEstimate: number;
 }
 
@@ -11,7 +11,7 @@ export interface IProject {
   id?: number;
   name: string;
   contactId: number;
-  deadline: number;
+  deadline: Date | string;
   costEstimate: number;
   status: string;
 }
@@ -128,6 +128,7 @@ export interface ProjectBillableEntry {
   billableType: string;
   billableId: number;
   billableAmount: number;
+  billableHours: number;
   billableCurrency: string;
   billableTransactionNo: string;
 }

@@ -25,6 +25,9 @@ import fs from 'fs'
 import cors from 'cors';
 
 export default ({ app }) => {
+
+
+
   // Add CORS middleware
   app.use(cors({
     origin: '*',
@@ -57,7 +60,11 @@ export default ({ app }) => {
   // Middleware for intercepting and transforming json responses.
   app.use(JSONResponseTransformer(snakecaseResponseTransformer));
 
-  app.use('/public', express.static(path.join(global.__storage_dir)));
+  app.use('/public', (req, res, next) => {
+    const storagePath = global.__storage_dir;
+    console.log('storagePath', storagePath);
+    next();
+  }, express.static(path.join(global.__storage_dir)));
 
   // Logger middleware.
   app.use(LoggerMiddleware);

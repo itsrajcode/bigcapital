@@ -221,7 +221,7 @@ export class ProjectTasksController extends BaseController {
 
     try {
       const tasks = await this.tasksApplication.getTasks(tenantId, projectId);
-
+      console.log("tasks_controller",tasks)
       return res.status(200).send({ tasks });
     } catch (error) {
       next(error);

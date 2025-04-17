@@ -12,6 +12,7 @@ import { useProjectSalesColumns } from './hooks';
 import withSettings from '@/containers/Settings/withSettings';
 
 import { compose } from '@/utils';
+import { useProjectInvoices } from '@/hooks/query/projectInvoices';
 
 /**
  * Porject sales datatable.
@@ -21,7 +22,9 @@ function ProjectSalesTableRoot({
   // #withSettings
   salesTableSize,
 }) {
+  const { data: invoices } = useProjectInvoices();
   // Retrieve project sales table columns.
+  console.log('invoices', invoices);
   const columns = useProjectSalesColumns();
 
   // Handle delete sale.
@@ -34,7 +37,7 @@ function ProjectSalesTableRoot({
   return (
     <DataTable
       columns={columns}
-      data={[]}
+      data={invoices.invoices}
       manualSortBy={true}
       selectionColumn={true}
       noInitialFetch={true}

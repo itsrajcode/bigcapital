@@ -1,10 +1,9 @@
-
-
 .bp4-button {
   min-width: 32px;
   min-height: 32px;
   padding-left: 12px;
   padding-right: 12px;
+  font-size: 12px; 
 }
 
 .bp4-button:not([class*='bp4-intent-']) {
@@ -23,6 +22,9 @@
 .bp4-button-group.bp4-minimal .bp4-button {
   background-color: transparent;
 }
+.bp4-button-group.bp4-button {
+  margin-left: 10px;
+}
 
 .bp4-button {
   &.bp4-intent-primary,
@@ -36,5 +38,47 @@
   }
 }
 
+/* Custom button styles matching the image */
+.bp4-button.bp4-intent-primary {
+  background-color: #313ca7 !important;
+  margin-right: 10px !important;
+  color: white !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  min-height: 40px !important;
+  &:hover {
+    background-color: white !important;
+    color: #313ca7 !important;
+    border: 1px solid #313ca7 !important;
+  }
+}
+
 .button--secondary {
+  background-color: white !important;
+  color: #3f51b5 !important;
+  border: 1px solid #3f51b5 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  padding: 8px 16px !important;
+  min-height: 40px !important;
+}
+
+.bp4-button.ml1{
+  background-color: white !important;
+  font-size: 14px !important;
+  color: #313ca7 !important;
+  border: 1px solid #313ca7 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  padding: 8px 16px !important;
+  min-height: 40px !important;
+  &:hover {
+    background-color: #313ca7 !important;
+    color: white !important;
+  }
 }

@@ -26,8 +26,10 @@ export class GetTasksService {
 
     // Retrieve the project.
     const tasks = await Task.query().where('projectId', projectId);
-
+    console.log("tasks_project",tasks)
     // Transformes and returns object.
-    return this.transformer.transform(tenantId, tasks, new TaskTransformer());
+    const data = await this.transformer.transform(tenantId, tasks, new TaskTransformer());
+    console.log("data",data)
+    return data;
   };
 }

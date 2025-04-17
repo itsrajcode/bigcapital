@@ -30,7 +30,7 @@ export class ChromiumlyHtmlConvert {
 
     const filename = `document-print-${Date.now()}.html`;
     const filePath = getPdfFilePath(filename);
-
+   
     await fs.writeFile(filePath, content);
     await Document.query().insert({ key: filename, mimeType: 'text/html' });
     const cleanup = async () => {
@@ -58,8 +58,12 @@ export class ChromiumlyHtmlConvert {
       html
     );
     const fileDir = getPdfFilesStorageDir(filename);
+    const baseUrl = Chromiumly.GOTENBERG_DOCS_ENDPOINT.endsWith('/')
+      ? Chromiumly.GOTENBERG_DOCS_ENDPOINT
+      : `${Chromiumly.GOTENBERG_DOCS_ENDPOINT}/`;
+    const url = new URL(fileDir.startsWith('/') ? fileDir.substring(1) : fileDir, baseUrl).href;
 
-    const url = path.join(Chromiumly.GOTENBERG_DOCS_ENDPOINT, fileDir);
+    console.log('Correctly formed URL:', url);
     const urlConverter = new UrlConverter();
 
     const buffer = await urlConverter.convert({
@@ -67,7 +71,7 @@ export class ChromiumlyHtmlConvert {
       properties,
       pdfFormat,
     });
-    await cleanupTempFile();
+    // await cleanupTempFile();
 
     return buffer;
   }
