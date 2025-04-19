@@ -1,0 +1,40 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: |
+          pnpm install
+
+      - name: Build Web App
+        run: |
+          echo "Building web app..."
+          echo "API Token: ${{ secrets.CLOUDFLARE_API_TOKEN }}"
+          echo "Account ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+          echo "Project Name: bookeasy"
+          echo "Directory: packages/webapp/build"
+          pnpm run build:webapp
+          
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: "bookeasyprod"  
+          directory: "packages/webapp/build"  
