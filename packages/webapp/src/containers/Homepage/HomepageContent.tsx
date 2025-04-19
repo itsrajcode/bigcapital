@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AccountsReceivableSection from './AccountsReceivableSection';
 import AccountsPayableSection from './AccountsPayableSection';
 import FinancialAccountingSection from './FinancialAccountingSection';
@@ -28,91 +28,99 @@ import { InvoiceStatusChart } from './components/InvoiceStatusChart';
 import { TopSellingItemsChart } from './components/TopSellingItemsChart';
 import { UnpaidInvoicesTable } from './components/UnpaidInvoicesTable';
 import { DataSummaryTable } from './components/DataSummaryTable';
+import { useQuery } from 'react-query';
+import { useDashboardAnalytics } from '@/services/dashboard';
+import { Spinner } from '@blueprintjs/core';
 
 function HomepageContent() {
-  const incomeData = [
-    { month: 'Jan', income: 120000, expense: 90000 },
-    { month: 'Feb', income: 78060, expense: 95000 },
-    { month: 'Mar', income: 135000, expense: 85000 },
-    { month: 'Apr', income: 110000, expense: 130000 },
-    { month: 'May', income: 180000, expense: 100000 },
-    { month: 'Jun', income: 190000, expense: 85000 },
-  ];
+
+  const { data, isLoading, error } = useDashboardAnalytics();
+  
+  // Add detailed logging to see the exact API response
+  console.log('[HomepageContent] Full API Response:', data);
+  console.log('[HomepageContent] Response Type:', typeof data);
+  console.log('[HomepageContent] Response Keys:', data ? Object.keys(data) : 'No data');
+  
+  // Extract the actual data from the response
+  const analyticsData = data?.analytics_dashboard_data || data;
+  console.log('[HomepageContent] Analytics Data:', analyticsData);
+
+  if (isLoading) {
+    return (
+      <div className="homepage__loading">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="homepage__error">
+        Error loading dashboard data: {error.message}
+      </div>
+    );
+  }
+
+  if (!analyticsData) {
+    return (
+      <div className="homepage__error">
+        No dashboard data available
+      </div>
+    );
+  }
+
+  // Format the data for charts and tables
+  const incomeData = analyticsData?.income_expense_overview || [];
 
   // Calculate totals for the header
   const totalIncome = incomeData.reduce((sum, item) => sum + item.income, 0);
   const totalExpense = incomeData.reduce((sum, item) => sum + item.expense, 0);
 
-  const topSellingData = [
-    { name: 'Macbook Pro', value: 400 },
-    { name: 'Earcots', value: 370 },
-    { name: 'Powerbank', value: 340 },
-    { name: 'iPhone 15pro', value: 300 },
-    { name: 'Glass Bottle', value: 290 },
-    { name: 'Samsung Flip', value: 246 },
-    { name: 'Books', value: 230 },
-    { name: 'Oraie Speaker', value: 210 },
-    { name: 'Sugar', value: 200 },
-    { name: 'Dell LED', value: 150 },
-  ];
+  // Format top selling items data
+  const topSellingItemsData = (analyticsData?.top_selling_items || []).map(item => ({
+    name: item.name,
+    value: item.quantity
+  }));
 
-  const invoiceStatusData = [
-    { name: 'Unpaid', value: 13, color: '#1248BA' },
-    { name: 'Paid', value: 9, color: '#00CB65' },
-    { name: 'Draft', value: 4, color: '#7B61FF' },
-    { name: 'Returned', value: 1, color: '#E1E1E1' },
-  ];
+  // Format invoice status data with colors
+  const statusColors = {
+    'draft': '#7B61FF',
+    'paid': '#00CB65',
+    'unpaid': '#1248BA',
+    'partially-paid': '#FFA500',
+    'overdue': '#FF0000',
+    'delivered': '#E1E1E1'
+  };
 
-  const topSellingItemsData = [
-    { name: 'Macbook Pro (13inch)', value: 568 },
-    { name: 'Kids Wear frock', value: 527 },
-    { name: 'Power Bank', value: 465 },
-    { name: 'Iphone 16 pro Ultra', value: 413 },
-    { name: "Men's Professional Suit", value: 349 },
-    { name: "Sheesham TV's Stand", value: 321 },
-    { name: 'LG Microwave', value: 247 },
-    { name: 'Boat Rocker Head Set', value: 236 },
-    { name: 'Samsung s39 pro Ultra', value: 167 },
-    { name: 'Bosch Washing Machine', value: 98 }
-  ];
+  const invoiceStatusData = (analyticsData?.invoice_statuses || []).map(status => ({
+    name: status.status,
+    value: parseInt(status.count),
+    color: statusColors[status.status] || '#E1E1E1'
+  }));
 
-  const unpaidInvoicesData = [
-    { customer: 'Venkat Reddy', value: '20,00,000', overdue: '5ds' },
-    { customer: 'Rohit Deshpande', value: '1,245,000', overdue: '4mths' },
-    { customer: 'Selvam', value: '810,000', overdue: '1yr' },
-    { customer: 'Dinesh Ramghariya', value: '367,000', overdue: '2yrs' },
-    { customer: 'Vivek Sharma', value: '10,00,000', overdue: '1yrs' },
-    { customer: 'Ankush Gupta', value: '100,000', overdue: '8mths' },
-    { customer: 'Karan Madaan', value: '160,000', overdue: '1yr' },
-  ];
+  // Format unpaid invoices data
+  const unpaidInvoicesData = (analyticsData?.top_unpaid_invoices || []).map(invoice => ({
+    customer: invoice.customer_name,
+    value: invoice.due_amount.toLocaleString('en-IN'),
+    overdue: getOverdueDays(invoice.due_date)
+  }));
 
-  const payablesData = [
-    { vendor: 'Venkat Reddy', value: 'INR 20,00,000', overdue: '5ds' },
-    { vendor: 'Rohit Deshpande', value: 'INR 1,245,000', overdue: '4mths' },
-    { vendor: 'Selvam', value: 'INR 810,000', overdue: '1yr' },
-    { vendor: 'Dinesh Ramghariya', value: 'INR 367,000', overdue: '2yrs' },
-    { vendor: 'Vivek Sharma', value: 'INR 10,00,000', overdue: '1yrs' },
-    { vendor: 'Ankush Gupta', value: 'INR 100,000', overdue: '8mths' },
-    { vendor: 'Karan Madlain', value: 'INR 160,000', overdue: '1yr' },
-  ];
+  // Format cash and bank balances data
+  const cashBankBalancesData = (analyticsData?.cash_and_bank_balances || []).map(account => ({
+    account: account.account_name,
+    value: (account.balance || 0).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  }));
 
-  const recentActivitiesData = [
-    { type: 'updated', user: 'You', reference: 'INV08/077', details: 'for 1001.0 with cash in hand.', time: '11:40pm' },
-    { type: 'generated', user: 'You', reference: 'Instamojo payment link', customer: 'Aman Verma', amount: '257.64', time: '10:14am' },
-    { type: 'requested', user: 'Aman Gupta', details: 'to release the INV/211 for project "UI/UX Design for mobile App"', time: 'Yesterday' },
-    { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
-    { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
-  ];
-
-  const cashBankBalancesData = [
-    { account: 'Cash in hand', value: '14,288.32' },
-    { account: 'Test', value: '0.00' },
-    { account: 'Citi Bank', value: '-4,764.62' },
-    { account: 'HDFC', value: '-5,236,743.86' },
-    { account: 'SBI Bank', value: '523.99' },
-    { account: 'Standard Chartered Bank', value: '1,856.43' },
-    { account: 'Xyz', value: '-77.38' },
-  ];
+  // const recentActivitiesData = [
+  //   { type: 'updated', user: 'You', reference: 'INV08/077', details: 'for 1001.0 with cash in hand.', time: '11:40pm' },
+  //   { type: 'generated', user: 'You', reference: 'Instamojo payment link', customer: 'Aman Verma', amount: '257.64', time: '10:14am' },
+  //   { type: 'requested', user: 'Aman Gupta', details: 'to release the INV/211 for project "UI/UX Design for mobile App"', time: 'Yesterday' },
+  //   { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
+  //   { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
+  // ];
 
   return (
     <div className="homepage__analytics" style={{ backgroundColor: '#f8f7f7' }}>
@@ -123,7 +131,10 @@ function HomepageContent() {
           <div className="analytics__overview">
             <div className="overview__header">
               <h2 className="overview__title">Income and Expense Overview</h2>
-              <button className="overview__period-selector">
+              <div>
+                Last 6 Months
+              </div>
+              {/* <button className="overview__period-selector">
                 Last 6 Months
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                   <path
@@ -133,7 +144,7 @@ function HomepageContent() {
                     strokeLinecap="round"
                   />
                 </svg>
-              </button>
+              </button> */}
             </div>
 
             <div className="overview__stats">
@@ -148,7 +159,7 @@ function HomepageContent() {
                     />
                   </svg>
                 </div>
-                <span>Income: INR {totalIncome.toLocaleString()}</span>
+                <span>Income: INR {totalIncome.toLocaleString('en-IN')}</span>
               </div>
               <div className="stats__expense">
                 <div className="stats__icon">
@@ -161,7 +172,7 @@ function HomepageContent() {
                     />
                   </svg>
                 </div>
-                <span>Expense: INR {totalExpense.toLocaleString()}</span>
+                <span>Expense: INR {totalExpense.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
@@ -178,29 +189,8 @@ function HomepageContent() {
 
         {/* Right column */}
         <div className="dashboard__right-column">
-          {/* Recent Activities */}
-          <div className="recent-activities">
-            <div className="section-header">
-              <h2>Recent Activities</h2>
-            </div>
-            <div className="activities-list">
-              {recentActivitiesData.map((activity, index) => (
-                <div key={index} className="activity-item">
-                  <div className="activity-avatar">{/* Avatar icon would go here */}</div>
-                  <div className="activity-content">
-                    <div className="activity-text">
-                      {activity.user} {activity.type} {activity.reference}
-                      {activity.customer && ` for customer ${activity.customer}`}
-                      {activity.amount && ` for amount ${activity.amount}`}
-                      {activity.details && ` ${activity.details}`}
-                    </div>
-                    <div className="activity-time">{activity.time}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button className="view-all-button">View All Activities</button>
-          </div>
+
+         
 
           {/* Invoices By Status */}
           <div className="analytics__invoices">
@@ -226,6 +216,8 @@ function HomepageContent() {
             </div>
           </div>
         </div>
+
+        
       </div>
 
       {/* Tables section - full width */}
@@ -238,16 +230,6 @@ function HomepageContent() {
             { key: 'overdue', label: 'Overdue' }
           ]}
           data={unpaidInvoicesData}
-        />
-
-        <DataSummaryTable
-          title="Top 5 Payables"
-          columns={[
-            { key: 'vendor', label: 'Vendor' },
-            { key: 'value', label: 'Value' },
-            { key: 'overdue', label: 'Overdue' }
-          ]}
-          data={payablesData}
         />
 
         <DataSummaryTable
@@ -269,6 +251,24 @@ function HomepageContent() {
       </div>
     </div>
   );
+}
+
+// Helper function to calculate overdue days/months/years
+function getOverdueDays(dueDate) {
+  const now = new Date();
+  const due = new Date(dueDate);
+  const diffTime = Math.abs(now - due);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 30) {
+    return `${diffDays}ds`;
+  } else if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months}mths`;
+  } else {
+    const years = Math.floor(diffDays / 365);
+    return `${years}${years === 1 ? 'yr' : 'yrs'}`;
+  }
 }
 
 export default HomepageContent;

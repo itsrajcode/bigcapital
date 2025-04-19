@@ -15,7 +15,7 @@ export default class DashboardMetaController {
     const router = Router();
 
     router.get('/boot', this.getDashboardBoot);
-    router.get('/meta', this.getDashboardAnalytics);
+    router.get('/analytics', this.getDashboardAnalytics);
 
     return router;
   }
