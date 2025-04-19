@@ -23,9 +23,10 @@ jobs:
         with:
           version: 8
           
-      - name: Install Dependencies
+      - name: Clear pnpm cache and install
         run: |
-          pnpm install
+          pnpm store prune
+          pnpm install --no-frozen-lockfile
 
       - name: Build Web App
         run: |
