@@ -1,6 +1,10 @@
+name: Cloudflare Pages Deployment
+
 on:
   push:
-    branches: [ "master" ]  # Runs ONLY when code is pushed to main branch
+    branches:
+      - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -31,5 +35,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: "bookeasy"  # Replace with your actual project name
-          directory: "packages/webapp/build"  # Your build folder (e.g. 'build', 'public')
+          projectName: "bookeasy"  
+          directory: "packages/webapp/build"  
