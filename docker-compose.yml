@@ -13,12 +13,14 @@ services:
       - '3306:3306'
     restart: unless-stopped
   mongo:
-    build: ./docker/mongo
+    image: mongo:latest
     volumes:
-      - ../mongodb_data/:/var/lib/mongodb
+      - ../mongodb_data/:/data/db
     ports:
       - '27017:27017'
     restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=bigcapital
   redis:
     build: ./docker/redis
     volumes:
