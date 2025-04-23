@@ -15,7 +15,7 @@ services:
   mongo:
     build: ./docker/mongo
     volumes:
-      - ../mongodb_data:/var/lib/mongodb
+      - ../mongodb_data/:/var/lib/mongodb
     ports:
       - '27017:27017'
     restart: unless-stopped
@@ -41,4 +41,16 @@ services:
       - "8080:80"
     depends_on:
       - mariadb
+    restart: unless-stopped
+  mongo-express:
+    image: mongo-express:latest
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
     restart: unless-stopped
