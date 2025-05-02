@@ -46,6 +46,7 @@ function ItemsCategoryActionsBar({
   const history = useHistory();
 
   const onClickNewCategory = () => {
+    console.log('hyii ia m working');
     openDialog('item-category-form', {});
   };
 

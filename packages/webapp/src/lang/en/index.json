@@ -767,6 +767,7 @@
   "qty_on_hand": "Qty on hand",
   "adjustment_account": "Adjustment account",
   "inventory_adjustment_list": "Inventory Adjustment List",
+  "new_adjustment": "New adjustment",
   "delete_adjustment": "Delete adjustment",
   "the_adjustment_transaction_has_been_created_successfully": "The adjustment transaction has been created successfully.",
   "the_adjustment_transaction_has_been_deleted_successfully": "The adjustment transaction has been deleted successfully.",

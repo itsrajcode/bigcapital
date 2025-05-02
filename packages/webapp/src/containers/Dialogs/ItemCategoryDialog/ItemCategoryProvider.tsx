@@ -12,7 +12,13 @@ const ItemCategoryContext = createContext();
 /**
  * Accounts chart data provider.
  */
-function ItemCategoryProvider({ itemCategoryId, dialogName, ...props }) {
+function ItemCategoryProvider({ 
+  itemCategoryId, 
+  dialogName, 
+  initialValues: providedInitialValues,
+  onSuccess,
+  ...props 
+}) {
   const { data: itemCategory, isFetching: isItemCategoryLoading } = useItemCategory(
     itemCategoryId,
     {
@@ -31,6 +37,8 @@ function ItemCategoryProvider({ itemCategoryId, dialogName, ...props }) {
   const provider = {
     itemCategoryId,
     dialogName,
+    initialValues: providedInitialValues,
+    onSuccess,
 
     itemCategory,
     isItemCategoryLoading,

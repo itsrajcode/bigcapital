@@ -24,6 +24,7 @@ import {
   WarehouseSelect,
   BranchSelectButton,
   AccountsSuggestField,
+  ItemsSuggestField,
 } from '@/components';
 import {
   inputIntent,
@@ -58,7 +59,7 @@ export default function InventoryAdjustmentFormDialogFields() {
   const dateFieldRef = useAutofocus();
 
   // Inventory adjustment dialog context.
-  const { accounts, branches, warehouses } = useInventoryAdjContext();
+  const { accounts, branches, warehouses, items, itemId } = useInventoryAdjContext();
 
   // Sets the primary warehouse to form.
   useSetPrimaryWarehouseToForm();
@@ -103,6 +104,33 @@ export default function InventoryAdjustmentFormDialogFields() {
       {featureCan(Features.Warehouses) && featureCan(Features.Branches) && (
         <FeatureRowDivider />
       )}
+
+      {/* Item Selection */}
+      <FastField name={'item_id'}>
+        {({ form, field, meta: { error, touched } }) => (
+          <FormGroup
+            label={<T id={'item'} />}
+            labelInfo={<FieldRequiredHint />}
+            intent={inputIntent({ error, touched })}
+            helperText={<ErrorMessage name="item_id" />}
+            className={'form-group--item'}
+          >
+            <ItemsSuggestField
+              items={items}
+              initialItemId={field.value}
+              selectedItemId={field.value}
+              onItemSelected={({ id }) => {
+                form.setFieldValue('item_id', id);
+              }}
+              allowCreate={false}
+              inputProps={{
+                placeholder: intl.get('select_item'),
+                intent: inputIntent({ error, touched }),
+              }}
+            />
+          </FormGroup>
+        )}
+      </FastField>
 
       <Row>
         <Col xs={5}>

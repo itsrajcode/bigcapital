@@ -31,6 +31,7 @@ function InventoryAdjustmentFloatingActions({
   // Handle submit make adjustment button click.
   const handleSubmitMakeAdjustmentBtnClick = (event) => {
     setSubmitPayload({ publish: true });
+    submitForm();
   };
 
   // Handle close button click.

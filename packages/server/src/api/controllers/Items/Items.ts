@@ -160,7 +160,7 @@ export default class ItemsController extends BaseController {
         .trim()
         .isLength({ max: DATATYPES_LENGTH.TEXT }),
       check('active').optional().isBoolean().toBoolean(),
-
+      check('quantity_on_hand').optional().isNumeric().toFloat(),
       check('media_ids').optional().isArray(),
       check('media_ids.*').exists().isNumeric().toInt(),
     ];

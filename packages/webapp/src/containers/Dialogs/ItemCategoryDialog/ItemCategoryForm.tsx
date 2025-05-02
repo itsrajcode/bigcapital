@@ -37,6 +37,8 @@ function ItemCategoryForm({
     dialogName,
     createItemCategoryMutate,
     editItemCategoryMutate,
+    initialValues: providedInitialValues,
+    onSuccess: onSuccessCallback
   } = useItemCategoryContext();
 
   // Initial values.
@@ -44,8 +46,9 @@ function ItemCategoryForm({
     () => ({
       ...defaultInitialValues,
       ...transformToForm(itemCategory, defaultInitialValues),
+      ...providedInitialValues,
     }),
-    [itemCategory],
+    [itemCategory, providedInitialValues],
   );
 
   // Transformes response errors.
@@ -63,7 +66,11 @@ function ItemCategoryForm({
     const form = { ...values };
 
     // Handle close the dialog after success response.
-    const afterSubmit = () => {
+    const afterSubmit = (response) => {
+      // Call the onSuccess callback if it exists
+      if (onSuccessCallback && response) {
+        onSuccessCallback(response);
+      }
       closeDialog(dialogName);
     };
     // Handle the response success.

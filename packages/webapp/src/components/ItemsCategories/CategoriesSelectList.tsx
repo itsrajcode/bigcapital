@@ -6,13 +6,43 @@ import { MenuItem } from '@blueprintjs/core';
 import { saveInvoke } from '@/utils';
 import classNames from 'classnames';
 import { CLASSES } from '@/constants/classes';
+import intl from 'react-intl-universal';
+import withDialogActions from '@/containers/Dialog/withDialogActions';
+import { DialogsName } from '@/constants/dialogs';
+import { compose } from '@/utils';
 
-export function CategoriesSelectList({
+// Creates a new category from query
+const createNewCategoryFromQuery = (name) => ({
+  name,
+  id: null,
+});
+
+// Create new category renderer
+const createNewCategoryRenderer = (query, active, handleClick) => (
+  <MenuItem
+    icon="add"
+    text={intl.get('list.create', { value: `"${query}"` })}
+    active={active}
+    shouldDismissPopover={false}
+    onClick={handleClick}
+  />
+);
+
+/**
+ * Categories select list component.
+ */
+function CategoriesSelectListRoot({
+  // #withDialogActions
+  openDialog,
+
+  // #ownProps
   categories,
   selecetedCategoryId,
   defaultSelectText = <T id={'select_category'} />,
   onCategorySelected,
   popoverFill = false,
+  allowCreate = false,
+  onCreateItemSelect,
   className,
   ...restProps
 }) {
@@ -39,6 +69,18 @@ export function CategoriesSelectList({
     [],
   );
 
+  // Handle create new item click
+  const handleCreateItemClick = (newCategory) => {
+    // Open the dialog with the new category name
+    openDialog(DialogsName.ItemCategoryForm, {
+      initialValues: { name: newCategory.name },
+      onSuccess: (category) => {
+        // After success, invoke the callback with the created category
+        onCreateItemSelect && onCreateItemSelect(category);
+      }
+    });
+  };
+
   return (
     <ListSelect
       items={categories}
@@ -49,6 +91,10 @@ export function CategoriesSelectList({
       onItemSelect={handleItemCategorySelected}
       itemPredicate={filterItemCategory}
       itemRenderer={categoryItem}
+      createNewItemFromQuery={allowCreate ? createNewCategoryFromQuery : null}
+      createNewItemRenderer={allowCreate ? createNewCategoryRenderer : null}
+      onCreateItemSelect={allowCreate ? handleCreateItemClick : null}
+      openDialog={openDialog}
       popoverProps={{ minimal: true, usePortal: !popoverFill }}
       className={classNames(
         'form-group--select-list',
@@ -61,3 +107,7 @@ export function CategoriesSelectList({
     />
   );
 }
+
+export const CategoriesSelectList = compose(
+  withDialogActions
+)(CategoriesSelectListRoot);

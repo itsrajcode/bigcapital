@@ -24,11 +24,16 @@ import classNames from 'classnames';
 import { useItemFormContext } from './ItemFormProvider';
 import { handleStringChange, inputIntent } from '@/utils';
 import { categoriesFieldShouldUpdate } from './utils';
+import withDialogActions from '@/containers/Dialog/withDialogActions';
+import { compose } from '@/utils';
+import { DialogsName } from '@/constants/dialogs';
 
 /**
  * Item form primary section.
  */
-export default function ItemFormPrimarySection() {
+function ItemFormPrimarySection({
+  openDialog,
+}) {
   // Item form context.
   const { isNewMode, item, itemsCategories } = useItemFormContext();
 
@@ -43,14 +48,19 @@ export default function ItemFormPrimarySection() {
 
   const itemTypeHintContent = (
     <>
-      <div class="mb1">
+      <div className="mb1">
         <FormattedHTMLMessage id={'services_that_you_provide_to_customers'} />
       </div>
-      <div class="mb1">
+      <div className="mb1">
         <FormattedHTMLMessage id={'products_you_buy_and_or_sell'} />
       </div>
     </>
   );
+
+  // This function will be passed to the dialog to handle when a new category is created
+  const handleCategoryCreated = (category, form) => {
+    form.setFieldValue('category_id', category.id);
+  };
 
   return (
     <div className={classNames(CLASSES.PAGE_FORM_HEADER_PRIMARY)}>
@@ -151,6 +161,15 @@ export default function ItemFormPrimarySection() {
                   onCategorySelected={(category) => {
                     form.setFieldValue('category_id', category.id);
                   }}
+                  allowCreate={true}
+                  onCreateItemSelect={(newCategory) => {
+                    openDialog(DialogsName.ItemCategoryForm, {
+                      initialValues: { name: newCategory.name },
+                      onSuccess: (category) => {
+                        form.setFieldValue('category_id', category.id);
+                      }
+                    });
+                  }}
                 />
               </FormGroup>
             )}
@@ -170,3 +189,7 @@ export default function ItemFormPrimarySection() {
     </div>
   );
 }
+
+export default compose(
+  withDialogActions
+)(ItemFormPrimarySection);

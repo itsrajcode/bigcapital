@@ -88,7 +88,7 @@ export class CreateItem {
     return {
       ...itemDTO,
       active: defaultTo(itemDTO.active, 1),
-      quantityOnHand: itemDTO.type === 'inventory' ? 0 : null,
+      quantityOnHand: itemDTO.type === 'inventory' ? itemDTO.quantityOnHand : null,
     };
   }
 

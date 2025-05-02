@@ -1,10 +1,11 @@
 // @ts-nocheck
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { DialogContent } from '@/components';
 import { Features } from '@/constants';
 import { useFeatureCan } from '@/hooks/state';
 import {
   useItem,
+  useItems,
   useAccounts,
   useBranches,
   useWarehouses,
@@ -16,45 +17,52 @@ const InventoryAdjustmentContext = createContext();
 /**
  * Inventory adjustment dialog provider.
  */
-function InventoryAdjustmentFormProvider({ itemId, dialogName, ...props }) {
+function InventoryAdjustmentFormProvider({ itemId, dialogName, children }) {
   // Features guard.
   const { featureCan } = useFeatureCan();
   const isWarehouseFeatureCan = featureCan(Features.Warehouses);
   const isBranchFeatureCan = featureCan(Features.Branches);
 
-  // Fetches accounts list.
-  const { isFetching: isAccountsLoading, data: accounts } = useAccounts();
+  // Fetch items list
+  const { data: itemsData = { items: [] }, isLoading: isItemsLoading } = useItems({});
 
-  // Fetches the item details.
-  const { isFetching: isItemLoading, data: item } = useItem(itemId);
+  // Fetches accounts list.
+  const { isFetching: isAccountsLoading, data: accounts = [] } = useAccounts();
+
+  // Check if itemId is valid (not undefined, null, or empty string)
+  const isValidItemId = itemId && itemId !== '' && itemId !== 'undefined';
+
+  // Fetches the item details - make it non-blocking by setting enabled to false if itemId is not provided
+  const { isFetching: isItemLoading, data: item = {} } = useItem(
+    isValidItemId ? itemId : null, 
+    {}, 
+    { enabled: Boolean(isValidItemId) }
+  );
 
   // Fetch warehouses list.
   const {
-    data: warehouses,
-    isLoading: isWarehouesLoading,
+    data: warehouses = [],
+    isLoading: isWarehousesLoading,
     isSuccess: isWarehousesSuccess,
   } = useWarehouses({}, { enabled: isWarehouseFeatureCan });
 
   // Fetches the branches list.
   const {
-    data: branches,
+    data: branches = [],
     isLoading: isBranchesLoading,
     isSuccess: isBranchesSuccess,
   } = useBranches({}, { enabled: isBranchFeatureCan });
 
-  const { mutateAsync: createInventoryAdjMutate } =
-    useCreateInventoryAdjustment();
+  const { mutateAsync: createInventoryAdjMutate } = useCreateInventoryAdjustment();
 
   // Submit payload.
   const [submitPayload, setSubmitPayload] = useState({});
 
-  // Determines whether the warehouse and branches are loading.
-  const isFeatureLoading = isWarehouesLoading || isBranchesLoading;
-
   // State provider.
   const provider = {
     item,
-    itemId,
+    itemId: isValidItemId ? itemId : '',
+    items: itemsData.items || [],
     branches,
     warehouses,
     accounts,
@@ -66,22 +74,27 @@ function InventoryAdjustmentFormProvider({ itemId, dialogName, ...props }) {
     isWarehousesSuccess,
     isAccountsLoading,
     isItemLoading,
-    isFeatureLoading,
-    isWarehouesLoading,
+    isItemsLoading,
+    isWarehousesLoading,
     isBranchesLoading,
 
     createInventoryAdjMutate,
     setSubmitPayload,
   };
 
+  // Determine if we're still loading critical data
+  const isLoading = (isValidItemId && isItemLoading) || isAccountsLoading || isItemsLoading || 
+    (isWarehouseFeatureCan && isWarehousesLoading) || 
+    (isBranchFeatureCan && isBranchesLoading);
+
   return (
-    <DialogContent isLoading={isAccountsLoading || isItemLoading}>
-      <InventoryAdjustmentContext.Provider value={provider} {...props} />
+    <DialogContent isLoading={isLoading}>
+      <InventoryAdjustmentContext.Provider value={provider}>
+        {children}
+      </InventoryAdjustmentContext.Provider>
     </DialogContent>
   );
 }
 
-const useInventoryAdjContext = () =>
-  React.useContext(InventoryAdjustmentContext);
-
-export { InventoryAdjustmentFormProvider, useInventoryAdjContext };
+export const useInventoryAdjContext = () => useContext(InventoryAdjustmentContext);
+export { InventoryAdjustmentFormProvider };

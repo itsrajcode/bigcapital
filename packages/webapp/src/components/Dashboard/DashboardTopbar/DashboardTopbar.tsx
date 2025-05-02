@@ -12,6 +12,7 @@ import {
   MenuItem,
   Menu,
   MenuDivider,
+  Intent,
 } from '@blueprintjs/core';
 import { Popover2 } from '@blueprintjs/popover2';
 
@@ -91,10 +92,52 @@ function DashboardTopbar({
           </Tooltip>
         </div> */}
         <DashboardTopbarSubscriptionMessage />
+        {pageTitle && (
+          <div className="dashboard__page-title" style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginLeft: '16px',
+            width: '100%'
+          }}>
+            <DashboardBackLink />
+            <h3 style={{ 
+              margin: 0,
+              fontSize: '16px',
+              fontWeight: 500,
+              color: '#1C2026'
+            }}>{pageTitle}</h3>
+            <DashboardBreadcrumbs />
+            {pageTitle === 'Inventory Adjustments' && (
+              <Button
+                icon={<Icon icon="plus" iconSize={16} />}
+                intent={Intent.PRIMARY}
+                className="inventory-adjustment-button"
+                onClick={() => openDialog(DialogsName.InventoryAdjustmentForm)}
+                style={{ 
+                  marginLeft: 'auto',
+                  height: '32px',
+                  padding: '0 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <T id={'new_adjustment'} />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
       
       <div class="dashboard__topbar-center">
-        <h2>EaseBooks</h2>
+        <h2 style={{
+          margin: 0,
+          fontSize: '20px',
+          fontWeight: 600,
+          color: '#1C2026'
+        }}>EaseBooks</h2>
       </div>
       
       <div class="dashboard__topbar-right">

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { useFormikContext } from 'formik';
-import { Choose, If } from '@/components';
+import { Choose } from '@/components';
 import IncrementAdjustmentFields from './IncrementAdjustmentFields';
 import DecrementAdjustmentFields from './DecrementAdjustmentFields';
 
@@ -9,7 +9,7 @@ export default function InventoryAdjustmentQuantityFields() {
   const { values } = useFormikContext();
 
   return (
-    <div class="adjustment-fields">
+    <div className="adjustment-fields">
       <Choose>
         <Choose.When condition={values.type === 'decrement'}>
           <DecrementAdjustmentFields />

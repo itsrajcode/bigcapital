@@ -31,6 +31,7 @@ const defaultInitialValues = {
   sell_description: '',
   purchase_description: '',
   purchase_tax_rate_id: '',
+  quantity_on_hand: 0,
 };
 
 /**

@@ -47,11 +47,11 @@ export default function QuickNewDropdown() {
         intent={Intent.PRIMARY}
         className={css`
           &.bp4-button.bp4-intent-primary {
-            width: 124px;
+            width: 150px;
             height: 40px;
             background-color: #0052cc;
             color: white;
-            padding: 9px 13px;
+            padding: 5px 8px;
             border-radius: 5px;
             &:hover {
               background-color: #004bb3;

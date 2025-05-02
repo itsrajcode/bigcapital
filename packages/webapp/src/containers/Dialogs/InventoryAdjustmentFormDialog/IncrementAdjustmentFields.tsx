@@ -26,6 +26,7 @@ export default function IncrementAdjustmentFields() {
                 medium={'true'}
                 intent={inputIntent({ error, touched })}
                 {...field}
+                value={field.value || '0'}
               />
             </FormGroup>
           )}
@@ -52,19 +53,21 @@ export default function IncrementAdjustmentFields() {
               fill={true}
             >
               <MoneyInputGroup
-                value={field.value}
+                value={field.value || ''}
                 allowDecimals={false}
-                allowNegativeValue={true}
+                allowNegativeValue={false}
                 inputRef={(ref) => (incrementFieldRef.current = ref)}
                 onChange={(value) => {
                   setFieldValue('quantity', value);
                 }}
                 onBlurValue={(value) => {
+                  const safeValue = toSafeNumber(value) || 0;
+                  const safeQtyOnHand = toSafeNumber(values.quantity_on_hand) || 0;
                   setFieldValue(
                     'new_quantity',
                     incrementQuantity(
-                      toSafeNumber(value),
-                      toSafeNumber(values.quantity_on_hand),
+                      safeValue,
+                      safeQtyOnHand,
                     ),
                   );
                 }}
@@ -89,7 +92,7 @@ export default function IncrementAdjustmentFields() {
               helperText={<ErrorMessage name="cost" />}
             >
               <MoneyInputGroup
-                value={value}
+                value={value || ''}
                 onChange={(value) => {
                   setFieldValue('cost', value);
                 }}
@@ -119,20 +122,21 @@ export default function IncrementAdjustmentFields() {
               helperText={<ErrorMessage name="new_quantity" />}
             >
               <MoneyInputGroup
-                value={field.value}
+                value={field.value || '0'}
                 allowDecimals={false}
-                allowNegativeValue={true}
+                allowNegativeValue={false}
                 onChange={(value) => {
                   setFieldValue('new_quantity', value);
                 }}
                 onBlurValue={(value) => {
-                  setFieldValue(
-                    'quantity',
-                    decrementQuantity(
-                      toSafeNumber(value),
-                      toSafeNumber(values.quantity_on_hand),
-                    ),
-                  );
+                  const safeValue = toSafeNumber(value) || 0;
+                  const safeQtyOnHand = toSafeNumber(values.quantity_on_hand) || 0;
+                  if (safeValue >= safeQtyOnHand) {
+                    setFieldValue(
+                      'quantity',
+                      safeValue - safeQtyOnHand
+                    );
+                  }
                 }}
                 intent={inputIntent({ error, touched })}
               />

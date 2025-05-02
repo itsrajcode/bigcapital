@@ -5,6 +5,8 @@ import { Select } from '@blueprintjs/select';
 import { FormattedMessage as T } from '../FormattedMessage';
 import classNames from 'classnames';
 import { CLASSES } from '@/constants/classes';
+import withDialogActions from '@/containers/Dialog/withDialogActions';
+import { compose } from '@/utils';
 
 export function ListSelect({
   buttonProps,
@@ -20,6 +22,10 @@ export function ListSelect({
   initialSelectedItem,
   onItemSelect,
   disabled = false,
+  createNewItemFromQuery,
+  createNewItemRenderer: providedCreateNewItemRenderer,
+  onCreateItemSelect,
+  openDialog,
   ...selectProps
 }) {
   const selectedItemObj = useMemo(
@@ -79,11 +85,38 @@ export function ListSelect({
     }
   };
 
+  const handleCreateNewItem = (query) => {
+    console.log('hyii ia m working', query);
+    if (openDialog) {
+      openDialog('item-category-form', { initialName: query });
+    }
+    onCreateItemSelect && onCreateItemSelect(query);
+  };
+
+  // Custom create new item renderer that logs when clicked
+  const createNewItemRenderer = (query, active, handleClick) => {
+    if (!providedCreateNewItemRenderer) return undefined;
+
+    const wrappedHandleClick = (e) => {
+      console.log(openDialog);
+      if (openDialog) {
+        console.log('hyii ia m working', query);
+        openDialog('item-category-form', { initialName: query });
+      }
+      handleClick(e);
+    };
+    
+    return providedCreateNewItemRenderer(query, active, wrappedHandleClick);
+  };
+
   return (
     <Select
-      itemRenderer={itemRenderer}
+      itemRenderer={selectProps.itemRenderer || itemRenderer}
       onItemSelect={handleItemSelect}
-      itemPredicate={filterItems}
+      itemPredicate={selectProps.itemPredicate || filterItems}
+      createNewItemFromQuery={createNewItemFromQuery}
+      createNewItemRenderer={createNewItemRenderer}
+      onCreateNewItem={handleCreateNewItem}
       {...selectProps}
       noResults={noResults}
       disabled={disabled}
@@ -102,3 +135,4 @@ export function ListSelect({
     </Select>
   );
 }
+

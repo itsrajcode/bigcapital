@@ -29,6 +29,7 @@ function DecrementAdjustmentFields() {
                 medium={'true'}
                 intent={inputIntent({ error, touched })}
                 {...field}
+                value={field.value || '0'}
               />
             </FormGroup>
           )}
@@ -40,7 +41,7 @@ function DecrementAdjustmentFields() {
       </Col>
 
       {/*------------ Decrement -----------*/}
-      <Col className={'col--decrement'}>
+      <Col className={'col--quantity'}>
         <Field name={'quantity'}>
           {({
             form: { values, setFieldValue },
@@ -54,21 +55,19 @@ function DecrementAdjustmentFields() {
               fill={true}
             >
               <MoneyInputGroup
-                value={field.value}
+                value={field.value || ''}
                 allowDecimals={false}
-                allowNegativeValue={true}
+                allowNegativeValue={false}
                 inputRef={(ref) => (decrementFieldRef.current = ref)}
                 onChange={(value) => {
                   setFieldValue('quantity', value);
                 }}
                 onBlurValue={(value) => {
-                  setFieldValue(
-                    'new_quantity',
-                    decrementQuantity(
-                      toSafeNumber(value),
-                      toSafeNumber(values.quantity_on_hand),
-                    ),
-                  );
+                  const safeValue = toSafeNumber(value) || 0;
+                  const safeQtyOnHand = toSafeNumber(values.quantity_on_hand) || 0;
+                  const newQty = safeQtyOnHand - safeValue;
+                  
+                  setFieldValue('new_quantity', newQty >= 0 ? newQty : 0);
                 }}
                 intent={inputIntent({ error, touched })}
               />
@@ -77,9 +76,11 @@ function DecrementAdjustmentFields() {
         </Field>
       </Col>
 
+      {/*------------ Sign -----------*/}
       <Col className={'col--sign'}>
         <span>=</span>
       </Col>
+
       {/*------------ New quantity -----------*/}
       <Col className={'col--quantity'}>
         <Field name={'new_quantity'}>
@@ -94,20 +95,19 @@ function DecrementAdjustmentFields() {
               helperText={<ErrorMessage name="new_quantity" />}
             >
               <MoneyInputGroup
-                value={field.value}
+                value={field.value || '0'}
                 allowDecimals={false}
-                allowNegativeValue={true}
+                allowNegativeValue={false}
                 onChange={(value) => {
                   setFieldValue('new_quantity', value);
                 }}
                 onBlurValue={(value) => {
-                  setFieldValue(
-                    'quantity',
-                    decrementQuantity(
-                      toSafeNumber(value),
-                      toSafeNumber(values.quantity_on_hand),
-                    ),
-                  );
+                  const safeValue = toSafeNumber(value) || 0;
+                  const safeQtyOnHand = toSafeNumber(values.quantity_on_hand) || 0;
+                  
+                  if (safeValue <= safeQtyOnHand) {
+                    setFieldValue('quantity', safeQtyOnHand - safeValue);
+                  }
                 }}
                 intent={inputIntent({ error, touched })}
               />

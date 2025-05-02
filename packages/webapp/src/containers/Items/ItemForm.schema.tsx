@@ -59,6 +59,15 @@ const Schema = Yup.object().shape({
       otherwise: Yup.number().nullable(),
     })
     .label(intl.get('inventory_account')),
+  quantity_on_hand: Yup.number()
+    .min(0)
+    .nullable()
+    .when(['type'], {
+      is: (value) => value === 'inventory',
+      then: Yup.number().min(0),
+      otherwise: Yup.number().nullable(),
+    })
+    .label(intl.get('quantity_on_hand')),
   category_id: Yup.number().positive().nullable(),
   stock: Yup.string() || Yup.boolean(),
   sellable: Yup.boolean().required(),
@@ -66,11 +75,15 @@ const Schema = Yup.object().shape({
 });
 
 export const transformItemFormData = (item, defaultValue) => {
+  if (!item) {
+    return {};
+  }
   return {
     ...item,
     sellable: !!defaultTo(item?.sellable, defaultValue.sellable),
     purchasable: !!defaultTo(item?.purchasable, defaultValue.purchasable),
     active: !!defaultTo(item?.active, defaultValue.active),
+    quantity_on_hand: defaultTo(item?.quantity_on_hand, 0),
   };
 };
 

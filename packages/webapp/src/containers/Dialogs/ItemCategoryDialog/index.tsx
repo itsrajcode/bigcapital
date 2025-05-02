@@ -37,6 +37,7 @@ function ItemCategoryFormDialog({
           dialogName={dialogName}
           action={payload.action}
           itemCategoryId={payload.id}
+          payload={payload}
         />
       </DialogSuspense>
     </Dialog>

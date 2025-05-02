@@ -1,2 +1,2 @@
 // @ts-nocheck
-export * from './CategoriesSelectList';
+export { CategoriesSelectList } from './CategoriesSelectList';

@@ -15,6 +15,7 @@ const Schema = Yup.object().shape({
     .min(3)
     .max(DATATYPES_LENGTH.TEXT)
     .label(intl.get('reason')),
+  description: Yup.string().max(DATATYPES_LENGTH.TEXT),
   quantity_on_hand: Yup.number().required().label(intl.get('qty')),
   quantity: Yup.number().integer().min(1).required(),
   cost: Yup.number().when(['type'], {
