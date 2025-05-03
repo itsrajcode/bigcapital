@@ -19,6 +19,15 @@ import InvoiceDetailTab from './InvoiceDetailTab';
 function InvoiceDetailsTabs() {
   const ability = useAbilityContext();
 
+  // Check if we have a valid ability instance with the can method
+  const canViewPaymentTransactions = React.useMemo(() => {
+    try {
+      return ability?.can?.(PaymentReceiveAction.View, AbilitySubject.PaymentReceive) || false;
+    } catch (error) {
+      return false;
+    }
+  }, [ability]);
+
   return (
     <DrawerMainTabs
       renderActiveTabPanelOnly={true}
@@ -34,10 +43,7 @@ function InvoiceDetailsTabs() {
         id={'journal_entries'}
         panel={<InvoiceGLEntriesTable />}
       />
-      {ability.can(
-        PaymentReceiveAction.View,
-        AbilitySubject.PaymentReceive,
-      ) && (
+      {canViewPaymentTransactions && (
         <Tab
           title={intl.get('payment_transactions')}
           id={'payment_transactions'}

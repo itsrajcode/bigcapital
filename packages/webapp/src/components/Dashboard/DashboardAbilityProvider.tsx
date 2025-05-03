@@ -5,19 +5,25 @@ import { createContextualCan } from '@casl/react';
 
 import { useDashboardMetaBoot } from './DashboardBoot';
 
-export const AbilityContext = React.createContext();
+// Create a default ability instance that denies everything
+const defaultAbility = new Ability([{ action: 'manage', subject: 'all', inverted: true }]);
+
+export const AbilityContext = React.createContext(defaultAbility);
 export const Can = createContextualCan(AbilityContext.Consumer);
 
 /**
  * Dashboard ability provider.
  */
 export function DashboardAbilityProvider({ children }) {
-  const {
-    meta: { abilities },
-  } = useDashboardMetaBoot();
+  const { meta, isLoading } = useDashboardMetaBoot();
 
-  // Ability instance.
-  const ability = new Ability(abilities);
+  // Create ability instance only if we have valid meta data
+  const ability = React.useMemo(() => {
+    if (isLoading || !meta || !meta.abilities) {
+      return defaultAbility;
+    }
+    return new Ability(meta.abilities);
+  }, [meta, isLoading]);
 
   return (
     <AbilityContext.Provider value={ability}>

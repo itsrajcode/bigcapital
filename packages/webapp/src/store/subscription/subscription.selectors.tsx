@@ -21,26 +21,26 @@ const subscriptionsSelector = (state, props) => {
 export const isSubscriptionOnTrialFactory = (slug) =>
   createSelector(
     subscriptionSelector(slug),
-    (subscription) => !!subscription?.on_trial,
+    (subscription) => subscription?.status === 'on_trial',
   );
 
 export const isSubscriptionActiveFactory = (slug) =>
   createSelector(subscriptionSelector(slug), (subscription) => {
-    return !!subscription?.active;
+    return subscription?.status === 'active';
   });
 
 export const isSubscriptionInactiveFactory = (slug) =>
   createSelector(
     subscriptionSelector(slug),
-    (subscription) => !!subscription?.inactive,
+    (subscription) => subscription?.status === 'inactive' || !subscription,
   );
 
 export const isSubscriptionsInactiveFactory = () =>
   createSelector(subscriptionsSelector, (subscriptions) =>
-    subscriptions.some((subscription) => subscription?.inactive),
+    subscriptions.some((subscription) => subscription?.status === 'inactive'),
   );
 
 export const isSubscriptionsActiveFactory = () =>
   createSelector(subscriptionsSelector, (subscriptions) =>
-    subscriptions.some((subscription) => subscription?.active),
+    subscriptions.some((subscription) => subscription?.status === 'active'),
   );

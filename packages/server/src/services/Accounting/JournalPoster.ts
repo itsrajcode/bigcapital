@@ -12,6 +12,9 @@ import {
   TEntryType,
 } from '@/interfaces';
 import Knex from 'knex';
+import { Service, Inject } from 'typedi';
+import { AccountsGraph } from './AccountsGraph';
+import { Logger } from '@/lib/Logger';
 
 const CONTACTS_CONFIG = [
   {
@@ -26,10 +29,11 @@ const CONTACTS_CONFIG = [
   },
 ];
 
+@Service()
 export default class JournalPoster implements IJournalPoster {
   tenantId: number;
   tenancy: TenancyService;
-  logger: any;
+  logger: Logger;
   models: any;
   repositories: any;
 
@@ -43,6 +47,9 @@ export default class JournalPoster implements IJournalPoster {
     [key: number]: { credit: number; debit: number }[];
   } = {};
   saveContactBalanceQueue: any;
+
+  trx: Knex.Transaction;
+  accountsGraph: AccountsGraph;
 
   /**
    * Journal poster constructor.
@@ -310,11 +317,11 @@ export default class JournalPoster implements IJournalPoster {
     const balancesList = await this.convertBalanceChangesToArr(accountsChange);
     const balancesAccounts = balancesList.map((b) => b.account);
 
-    // Ensure the accounts has atleast zero in amount.
+    // Ensure the accounts has at least zero in amount and bank_balance.
     await Account.query(this.trx)
       .where('amount', null)
       .whereIn('id', balancesAccounts)
-      .patch({ amount: 0 });
+      .patch({ amount: 0, bank_balance: 0 });
 
     const balanceUpdateOpers: Promise<void>[] = [];
 
@@ -328,9 +335,14 @@ export default class JournalPoster implements IJournalPoster {
           tenantId: this.tenantId,
         }
       );
+
+      // Update both amount and bank_balance columns
       const query = Account.query(this.trx)
-        [method]('amount', Math.abs(balance.change))
-        .where('id', balance.account);
+        .where('id', balance.account)
+        .patch({
+          amount: Account.knex().raw(`amount ${balance.change < 0 ? '-' : '+'} ?`, [Math.abs(balance.change)]),
+          bank_balance: Account.knex().raw(`bank_balance ${balance.change < 0 ? '-' : '+'} ?`, [Math.abs(balance.change)])
+        });
 
       balanceUpdateOpers.push(query);
     });

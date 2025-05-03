@@ -136,13 +136,20 @@ export default class PlanSubscription extends mixin(SystemModel) {
 
   /**
    * Check if the subscription is active.
-   * Crtiria should be active:
-   *  - During the trial period should NOT be canceled.
-   *  - Out of trial period should NOT be ended.
+   * Criteria for active:
+   *  - During trial period: NOT canceled
+   *  - Out of trial period: Must have lemonSubscriptionId and NOT ended
    * @return {Boolean}
    */
   public active() {
-    return this.onTrial() ? !this.canceled() : !this.ended();
+    // If on trial, active if not canceled
+    if (this.onTrial()) {
+      return !this.canceled();
+    }
+    
+    // If trial has ended, must have a valid lemonSubscriptionId (paid subscription)
+    // and subscription period must not have ended
+    return !!this.lemonSubscriptionId && !this.ended();
   }
 
   /**

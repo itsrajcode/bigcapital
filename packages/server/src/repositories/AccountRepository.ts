@@ -13,7 +13,9 @@ import {
   UnearnedRevenueAccount,
 } from '@/database/seeds/data/accounts';
 import { TenantMetadata } from '@/system/models';
+import { Service } from 'typedi';
 
+@Service()
 export default class AccountRepository extends TenantRepository {
   /**
    * Gets the repository's model.
@@ -50,7 +52,14 @@ export default class AccountRepository extends TenantRepository {
   async balanceChange(accountId: number, amount: number): Promise<void> {
     const method: string = amount < 0 ? 'decrement' : 'increment';
 
-    await this.model.query().where('id', accountId)[method]('amount', amount);
+    // Update both amount and bank_balance columns
+    await this.model.query()
+      .where('id', accountId)
+      .patch({
+        amount: this.model.knex().raw(`amount ${amount < 0 ? '-' : '+'} ?`, [Math.abs(amount)]),
+        bank_balance: this.model.knex().raw(`bank_balance ${amount < 0 ? '-' : '+'} ?`, [Math.abs(amount)])
+      });
+
     this.flushCache();
   }
 

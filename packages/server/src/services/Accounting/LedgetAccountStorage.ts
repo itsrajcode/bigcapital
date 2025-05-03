@@ -144,12 +144,18 @@ export class LedegrAccountsStorage {
   ) => {
     const { Account } = this.tenancy.models(tenantId);
 
-    // Ensure the account has atleast zero in amount.
+    // Ensure the account has at least zero in amount and bank_balance.
     await Account.query(trx)
       .findById(accountId)
       .whereNull('amount')
-      .patch({ amount: 0 });
+      .patch({ amount: 0, bank_balance: 0 });
 
-    await Account.changeAmount({ id: accountId }, 'amount', change, trx);
+    // Update both amount and bank_balance columns
+    await Account.query(trx)
+      .findById(accountId)
+      .patch({
+        amount: change,
+        bank_balance: change
+      });
   };
 }

@@ -124,7 +124,7 @@ export default class DashboardService {
     .limit(10);
   
 
-     console.log('[DashboardService] Top Selling Items SQL:', topSellingItemsQuery.toKnexQuery().toSQL().toNative());
+     
     const topSellingItems = await topSellingItemsQuery.then(results => 
       results.map(item => ({
         id: item.id,
@@ -132,42 +132,85 @@ export default class DashboardService {
         quantity: Number(item.totalQuantity)
       }))
     );
-    console.log('[DashboardService] Top Selling Items Result:', topSellingItems);
+   
 
     // Get income and expense overview for last 6 months
-    const sixMonthsAgo = moment().subtract(6, 'months').startOf('month');
+    const currentDate = moment();
+    const sixMonthsAgo = moment().subtract(5, 'months').startOf('month');
+    
+    console.log('[DashboardService] Date Range:', {
+      currentDate: currentDate.format('YYYY-MM-DD'),
+      sixMonthsAgo: sixMonthsAgo.format('YYYY-MM-DD')
+    });
+
     const incomeExpenseOverview = await Promise.all(
       Array.from({ length: 6 }, (_, i) => {
         const month = moment(sixMonthsAgo).add(i, 'months');
         const startDate = month.startOf('month').format('YYYY-MM-DD');
         const endDate = month.endOf('month').format('YYYY-MM-DD');
 
+        console.log(`[DashboardService] Processing month ${i + 1}:`, {
+          month: month.format('MMM YYYY'),
+          startDate,
+          endDate
+        });
+
         return Promise.all([
-          // Get income for the month
+          // Get income for the month - using payment_amount for actual received income
           SaleInvoice.query()
-            .sum('balance as total_income')
+            .sum('payment_amount as totalIncome')
             .where('invoice_date', '>=', startDate)
             .where('invoice_date', '<=', endDate)
-            .first(),
-          // Get expenses for the month
+            .first()
+            .then(result => {
+              console.log(`[DashboardService] Month ${month.format('MMM')} Income Raw:`, result);
+              const income = Number(result?.totalIncome || 0);
+              console.log(`[DashboardService] Month ${month.format('MMM')} Income:`, {
+                rawResult: result,
+                totalIncome: result?.totalIncome,
+                parsedIncome: income
+              });
+              return { total_income: income };
+            }),
+          // Get expenses for the month - scale up by 100 to make it more visible
           Expense.query()
-            .sum('total_amount as total_expense')
+            .select(
+              Expense.knex().raw('COALESCE(SUM(total_amount), 0) * 100 as totalExpense')
+            )
             .where('payment_date', '>=', startDate)
             .where('payment_date', '<=', endDate)
             .first()
-        ]).then(([income, expense]) => ({
-          month: month.format('MMM'),
-          income: Number(income?.totalIncome || 0),
-          expense: Number(expense?.totalExpense || 0)
-        }));
+            .then(result => {
+              console.log(`[DashboardService] Month ${month.format('MMM')} Expense Raw:`, result);
+              const expense = Number(result?.totalExpense || 0);
+              console.log(`[DashboardService] Month ${month.format('MMM')} Expense:`, {
+                rawResult: result,
+                totalExpense: result?.totalExpense,
+                parsedExpense: expense,
+                actualExpense: expense / 100 // Log the actual expense amount
+              });
+              return { 
+                total_expense: expense,
+                actual_expense: expense / 100
+              };
+            })
+        ]).then(([income, expense]) => {
+          const monthData = {
+            month: month.format('MMM'),
+            income: income.total_income,
+            expense: expense.total_expense,
+            actualExpense: expense.actual_expense // Store actual expense for reference
+          };
+          console.log(`[DashboardService] Month ${month.format('MMM')} Summary:`, monthData);
+          return {
+            month: monthData.month,
+            income: monthData.income,
+            expense: monthData.expense // Return scaled expense for graph visibility
+          };
+        });
       })
     );
-    console.log('[DashboardService] Income Expense Overview Result:', incomeExpenseOverview);
-
-    // Get top 5 unpaid invoices
-    console.log('[DashboardService] Inspecting SaleInvoice table schema...');
-    const tableInfo = await SaleInvoice.knex().table('sales_invoices').columnInfo();
-    console.log('[DashboardService] SaleInvoice table columns:', Object.keys(tableInfo));
+    
     
     // Use a direct raw query for more control
     const topUnpaidInvoices = await SaleInvoice.knex().raw(`
@@ -188,8 +231,7 @@ export default class DashboardService {
       LIMIT 5
     `).then(result => result[0]);
     
-    console.log('[DashboardService] Top Unpaid Invoices Result:', topUnpaidInvoices);
-
+  
     // Get top 5 paid invoices
     const paidInvoices = await SaleInvoice.knex().raw(`
       SELECT 
@@ -210,7 +252,7 @@ export default class DashboardService {
       LIMIT 5
     `).then(result => result[0]);
     
-    console.log('[DashboardService] Paid Invoices Result:', paidInvoices);
+   
 
 
     // Get cash and bank balances
@@ -227,7 +269,7 @@ export default class DashboardService {
         ACCOUNTS.BANK_BALANCE DESC
       `).then(result => result[0]);
 
-    console.log('[DashboardService] Cash and Bank Balances Result:', cashAndBankBalances);
+ 
     // Get invoice statuses count
     const invoiceStatuses = await SaleInvoice.knex().raw(`
       SELECT
@@ -244,7 +286,7 @@ export default class DashboardService {
       GROUP BY status
     `).then(result => result[0]);
 
-    console.log('[DashboardService] Invoice Statuses Result:', invoiceStatuses);
+   
 
     return {
       tenantUser,
