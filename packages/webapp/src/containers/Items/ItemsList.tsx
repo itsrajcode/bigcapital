@@ -9,6 +9,7 @@ import { ItemsListProvider } from './ItemsListProvider';
 
 import ItemsActionsBar from './ItemsActionsBar';
 import ItemsDataTable from './ItemsDataTable';
+import ItemsViewsTabs from './ItemsViewsTabs';
 
 import withItems from './withItems';
 import withItemsActions from './withItemsActions';
@@ -38,6 +39,7 @@ function ItemsList({
       tableStateChanged={itemsTableStateChanged}
     >
       <ItemsActionsBar />
+      <ItemsViewsTabs />
 
       <DashboardPageContent>
         <ItemsDataTable />

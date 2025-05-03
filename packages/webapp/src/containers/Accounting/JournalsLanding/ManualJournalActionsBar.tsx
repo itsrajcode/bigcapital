@@ -103,12 +103,6 @@ function ManualJournalActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'manual-journals'}
-          allMenuItem={true}
-          views={journalsViews}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={ManualJournalAction.Create} a={AbilitySubject.ManualJournal}>
           <Button

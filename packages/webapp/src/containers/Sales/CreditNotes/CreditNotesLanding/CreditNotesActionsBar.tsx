@@ -107,12 +107,6 @@ function CreditNotesActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          allMenuItem={true}
-          resourceName={'credit_notes'}
-          views={CreditNotesView}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={CreditNoteAction.Create} a={AbilitySubject.CreditNote}>
           <Button

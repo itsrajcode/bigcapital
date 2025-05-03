@@ -7,6 +7,7 @@ import { DashboardPageContent } from '@/components';
 
 import ExpenseActionsBar from './ExpenseActionsBar';
 import ExpenseDataTable from './ExpenseDataTable';
+import ExpenseViewTabs from './ExpenseViewTabs';
 
 import withExpenses from './withExpenses';
 import withExpensesActions from './withExpensesActions';
@@ -39,7 +40,7 @@ function ExpensesList({
       tableStateChanged={expensesTableStateChanged}
     >
       <ExpenseActionsBar />
-
+      <ExpenseViewTabs />
       <DashboardPageContent>
         <ExpenseDataTable />
       </DashboardPageContent>

@@ -119,13 +119,7 @@ function EstimateActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'estimates'}
-          allMenuItem={true}
-          allMenuItemText={<T id={'all'} />}
-          views={estimatesViews}
-          onChange={handleTabChange}
-        />
+       
         <NavbarDivider />
         <Can I={SaleEstimateAction.Create} a={AbilitySubject.Estimate}>
           <Button

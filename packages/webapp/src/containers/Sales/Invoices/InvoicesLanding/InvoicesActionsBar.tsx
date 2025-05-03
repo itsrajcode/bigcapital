@@ -115,12 +115,6 @@ function InvoiceActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          allMenuItem={true}
-          resourceName={'invoices'}
-          views={invoicesViews}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={SaleInvoiceAction.Create} a={AbilitySubject.Invoice}>
           <Button

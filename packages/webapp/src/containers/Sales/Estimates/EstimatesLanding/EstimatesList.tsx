@@ -6,6 +6,7 @@ import '@/style/pages/SaleEstimate/List.scss';
 
 import EstimatesActionsBar from './EstimatesActionsBar';
 import EstimatesDataTable from './EstimatesDataTable';
+import EstimatesViewTabs from './EstimatesViewTabs';
 
 import withEstimates from './withEstimates';
 import withEstimatesActions from './withEstimatesActions';
@@ -38,6 +39,7 @@ function EstimatesList({
       tableStateChanged={estimatesTableStateChanged}
     >
       <EstimatesActionsBar />
+      <EstimatesViewTabs />
 
       <DashboardPageContent>
         <EstimatesDataTable />

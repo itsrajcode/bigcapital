@@ -105,11 +105,6 @@ function VendorActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'vendors'}
-          views={vendorsViews}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={VendorActionsBar.Create} a={AbilitySubject.Vendor}>
           <Button

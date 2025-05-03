@@ -6,6 +6,7 @@ import '@/style/pages/SaleReceipt/List.scss';
 
 import ReceiptActionsBar from './ReceiptActionsBar';
 import ReceiptsTable from './ReceiptsTable';
+import ReceiptViewTabs from './ReceiptViewTabs';
 
 import withReceipts from './withReceipts';
 import withReceiptsActions from './withReceiptsActions';
@@ -39,7 +40,7 @@ function ReceiptsList({
     >
       <DashboardPageContent>
         <ReceiptActionsBar />
-
+        <ReceiptViewTabs />
         <DashboardPageContent>
           <ReceiptsTable />
         </DashboardPageContent>

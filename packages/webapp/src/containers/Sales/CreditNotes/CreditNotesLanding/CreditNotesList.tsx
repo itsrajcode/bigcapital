@@ -6,6 +6,7 @@ import '@/style/pages/CreditNote/List.scss';
 import { DashboardPageContent } from '@/components';
 import CreditNotesActionsBar from './CreditNotesActionsBar';
 import CreditNotesDataTable from './CreditNotesDataTable';
+import CreditNotesViewTabs from './CreditNotesViewTabs';
 
 import withCreditNotes from './withCreditNotes';
 import withCreditNotesActions from './withCreditNotesActions';
@@ -35,7 +36,7 @@ function CreditNotesList({
       tableStateChanged={creditNoteTableStateChanged}
     >
       <CreditNotesActionsBar />
-
+      <CreditNotesViewTabs />
       <DashboardPageContent>
         <CreditNotesDataTable />
       </DashboardPageContent>

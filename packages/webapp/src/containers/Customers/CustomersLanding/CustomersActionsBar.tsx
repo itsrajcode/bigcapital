@@ -121,13 +121,6 @@ function CustomerActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'customers'}
-          views={customersViews}
-          allMenuItem={true}
-          allMenuItemText={<T id={'all'} />}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={CustomerAction.Create} a={AbilitySubject.Item}>
           <Button

@@ -105,12 +105,6 @@ function ExpensesActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'expenses'}
-          views={expensesViews}
-          allMenuItem={true}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={ExpenseAction.Create} a={AbilitySubject.Expense}>
           <Button

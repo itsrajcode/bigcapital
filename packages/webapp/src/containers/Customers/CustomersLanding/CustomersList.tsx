@@ -7,6 +7,7 @@ import { DashboardPageContent } from '@/components';
 
 import CustomersActionsBar from './CustomersActionsBar';
 import CustomersTable from './CustomersTable';
+import CustomersViewsTabs from './CustomersViewsTabs';
 import { CustomersListProvider } from './CustomersListProvider';
 
 import withCustomers from './withCustomers';
@@ -39,6 +40,7 @@ function CustomersList({
       tableStateChanged={customersTableStateChanged}
     >
       <CustomersActionsBar />
+      <CustomersViewsTabs />
 
       <DashboardPageContent>
         <CustomersTable />

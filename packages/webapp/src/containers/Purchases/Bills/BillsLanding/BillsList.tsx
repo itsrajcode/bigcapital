@@ -8,6 +8,7 @@ import { BillsListProvider } from './BillsListProvider';
 
 import BillsActionsBar from './BillsActionsBar';
 import BillsTable from './BillsTable';
+import BillsViewsTabs from './BillsViewsTabs';
 
 import withBills from './withBills';
 import withBillsActions from './withBillsActions';
@@ -39,6 +40,7 @@ function BillsList({
       tableStateChanged={billsTableStateChanged}
     >
       <BillsActionsBar />
+      <BillsViewsTabs />
 
       <DashboardPageContent>
         <BillsTable />

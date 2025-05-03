@@ -101,13 +101,6 @@ function BillActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'bills'}
-          views={billsViews}
-          allMenuItem={true}
-          allMenuItemText={<T id={'all'} />}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={BillAction.Create} a={AbilitySubject.Bill}>
           <Button

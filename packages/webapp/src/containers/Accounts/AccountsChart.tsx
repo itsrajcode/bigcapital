@@ -7,6 +7,7 @@ import { DashboardPageContent, DashboardContentTable } from '@/components';
 import { AccountsChartProvider } from './AccountsChartProvider';
 import AccountsActionsBar from './AccountsActionsBar';
 import AccountsDataTable from './AccountsDataTable';
+import AccountsViewsTabs from './AccountsViewsTabs';
 
 import withAccounts from '@/containers/Accounts/withAccounts';
 import withAccountsTableActions from './withAccountsTableActions';
@@ -39,6 +40,7 @@ function AccountsChart({
       tableStateChanged={accountsTableStateChanged}
     >
       <AccountsActionsBar />
+      <AccountsViewsTabs />
 
       <DashboardPageContent>
         <DashboardContentTable>

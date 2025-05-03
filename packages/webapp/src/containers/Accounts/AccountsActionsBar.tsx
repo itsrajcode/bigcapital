@@ -129,13 +129,6 @@ function AccountsActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'accounts'}
-          allMenuItem={true}
-          allMenuItemText={<T id={'all_accounts'} />}
-          views={resourceViews}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
         <Can I={AccountAction.Create} a={AbilitySubject.Account}>
           <Button

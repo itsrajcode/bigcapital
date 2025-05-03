@@ -8,6 +8,7 @@ import { InvoicesListProvider } from './InvoicesListProvider';
 
 import InvoicesDataTable from './InvoicesDataTable';
 import InvoicesActionsBar from './InvoicesActionsBar';
+import InvoiceViewTabs from './InvoiceViewTabs';
 
 import withInvoices from './withInvoices';
 import withInvoiceActions from './withInvoiceActions';
@@ -40,7 +41,7 @@ function InvoicesList({
       tableStateChanged={invoicesTableStateChanged}
     >
       <InvoicesActionsBar />
-
+      <InvoiceViewTabs />
       <DashboardPageContent>
         <InvoicesDataTable />
       </DashboardPageContent>

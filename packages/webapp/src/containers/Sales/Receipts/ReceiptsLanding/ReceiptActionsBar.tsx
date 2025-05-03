@@ -121,14 +121,6 @@ function ReceiptActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'receipts'}
-          allMenuItem={true}
-          allMenuItemText={<T id={'all'} />}
-          views={receiptsViews}
-          onChange={handleTabChange}
-        />
-
         <NavbarDivider />
         <Can I={SaleReceiptAction.Create} a={AbilitySubject.Receipt}>
           <Button

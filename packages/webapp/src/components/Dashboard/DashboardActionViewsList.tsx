@@ -13,6 +13,7 @@ import {
 } from '@blueprintjs/core';
 import { FormattedMessage as T } from '@/components';
 import { Icon } from '@/components';
+import { DashboardViewsTabs } from './DashboardViewsTabs';
 
 /**
  * Dashboard action views list.
@@ -23,47 +24,23 @@ export function DashboardActionViewsList({
   allMenuItemText,
   views,
   onChange,
+  currentViewSlug,
 }) {
-  const handleClickViewItem = (view) => {
-    onChange && onChange(view);
-  };
-
-  const viewsMenuItems = views.map((view) => (
-    <MenuItem onClick={() => handleClickViewItem(view)} text={view.name} />
-  ));
-
-  const handleAllTabClick = () => {
-    handleClickViewItem(null);
-  };
-
-  const content = (
-    <Menu>
-      {allMenuItem && (
-        <>
-          <MenuItem
-            onClick={handleAllTabClick}
-            text={allMenuItemText || 'All'}
-          />
-          <Divider />
-        </>
-      )}
-      {viewsMenuItems}
-    </Menu>
-  );
+  // Transform views to tabs (ensure each view has a 'name' and 'slug')
+  const tabs = views.map((view) => ({
+    name: view.name,
+    slug: view.slug,
+  }));
 
   return (
-    <Popover
-      content={content}
-      minimal={true}
-      interactionKind={PopoverInteractionKind.CLICK}
-      position={Position.BOTTOM_LEFT}
-    >
-      <Button
-        className={classNames(Classes.MINIMAL, 'button--table-views')}
-        icon={<Icon icon="table-16" iconSize={16} />}
-        text={<T id={'table_views'} />}
-        rightIcon={'caret-down'}
-      />
-    </Popover>
+    <DashboardViewsTabs
+      resourceName={resourceName}
+      tabs={tabs}
+      currentViewSlug={currentViewSlug}
+      onChange={onChange}
+      allTab={!!allMenuItem}
+      defaultTabText={allMenuItemText || 'All'}
+      newViewTab={false}
+    />
   );
 }

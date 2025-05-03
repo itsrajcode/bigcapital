@@ -19,7 +19,6 @@ import {
   If,
   Can,
   Icon,
-  DashboardActionViewsList,
   AdvancedFilterPopover,
   DashboardFilterButton,
 } from '@/components';
@@ -121,13 +120,6 @@ function ItemsActionsBar({
   return (
     <DashboardActionsBar>
       <NavbarGroup>
-        <DashboardActionViewsList
-          resourceName={'items'}
-          allMenuItem={true}
-          allMenuItemText={<T id={'all_items'} />}
-          views={itemsViews}
-          onChange={handleTabChange}
-        />
         <NavbarDivider />
 
         <Can I={ItemAction.Create} a={AbilitySubject.Item}>
