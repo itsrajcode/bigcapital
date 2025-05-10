@@ -15,3 +15,12 @@ export const useSetOrganizations = () => {
 export const useCurrentOrganization = () => {
   return useSelector(getCurrentOrganizationFactory())
 };
+
+/**
+ * Hook to get the organization's base currency code
+ * @returns {string} The organization's base currency or 'USD' as default
+ */
+export const useOrganizationBaseCurrency = () => {
+  const organization = useCurrentOrganization();
+  return organization?.base_currency || 'USD';
+};

@@ -10,6 +10,7 @@ import 'moment/locale/ar-ly';
 import 'moment/locale/es-us';
 
 import AppIntlLoader from './AppIntlLoader';
+import TrialBanner from './TrialBanner';
 import { EnsureAuthenticated } from '@/components/Guards/EnsureAuthenticated';
 import GlobalErrors from '@/containers/GlobalErrors/GlobalErrors';
 
@@ -43,6 +44,7 @@ function AppInsider({ history }) {
   return (
     <div className="App">
       <DashboardThemeProvider>
+        <TrialBanner />
         <Suspense fallback={'Loading...'}>
           <Router history={history}>
             <Switch>

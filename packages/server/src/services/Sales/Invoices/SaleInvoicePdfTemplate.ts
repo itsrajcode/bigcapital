@@ -19,10 +19,19 @@ export class SaleInvoicePdfTemplate {
    * @returns
    */
   async getInvoicePdfTemplate(tenantId: number, invoiceTemplateId: number) {
+    console.log("Getting template with ID:", invoiceTemplateId);
+    
     const template = await this.getPdfTemplateService.getPdfTemplate(
       tenantId,
       invoiceTemplateId
     );
+    
+    console.log("Retrieved template:", {
+      id: template.id,
+      templateName: template.templateName,
+      hasAttributes: !!template.attributes
+    });
+    
     if (template.templateName === 'Minimal Basic Template') {
       return {
         ...template,
@@ -51,6 +60,12 @@ export class SaleInvoicePdfTemplate {
       brandingTemplateAttrs,
       organizationBrandingAttrs
     );
+    
+    console.log("Final template being returned:", {
+      templateName: template.templateName,
+      hasAttributes: !!attributes
+    });
+    
     return {
       ...template,
       attributes,

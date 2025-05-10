@@ -13,11 +13,9 @@ import { compose } from '@/utils';
 function SidebarContainerJSX({
   // #ownProps
   children,
+  sidebarExpended = true,
 }) {
   const sidebarScrollerRef = React.useRef();
-
-  // Set sidebarExpended to true to match your screenshot
-  const sidebarExpended = true;
 
   useObserveSidebarExpendedBodyclass(sidebarExpended);
 
@@ -42,7 +40,9 @@ function SidebarContainerJSX({
 
   return (
     <div
-      className="sidebar"
+      className={classNames("sidebar", {
+        "sidebar--mini-sidebar": !sidebarExpended
+      })}
       id="sidebar"
       onMouseLeave={handleSidebarMouseLeave}
     >

@@ -5,6 +5,12 @@ import {
   InvoicePaperTemplateProps,
 } from './InvoicePaperTemplate';
 import { MinimalBasicTemplate } from './MinimalBasicInvoice';
+import { ModernCompactTemplate } from './ModernCompactTemplate';
+import { ClassicalTemplate } from './ClassicalTemplate';
+import { SimpleBusinessTemplate } from './SimpleBusinessTemplate';
+import { MinimalistTemplate } from './MinimalistTemplate';
+import { BlackMinimalTemplate } from './BlackMinimalTemplate';
+import { BasicTemplate } from './BasicTemplate';
 import { useElementCustomizeContext } from '@/containers/ElementCustomize/ElementCustomizeProvider';
 import { InvoiceCustomizeFormValues } from './types';
 import { Box } from '@/components';
@@ -28,9 +34,25 @@ const withInvoicePreviewTemplateProps = <P extends object>(
       ...values,
     };
 
+    // First check the form's templateStyle field (for new/editing templates)
+    // Fall back to the pdfTemplate.templateName for existing templates
+    const templateStyle = values.templateStyle || pdfTemplate?.templateName || '';
+
     return (
       <Box px={4} py={6}>
-        {pdfTemplate?.templateName === 'Minimal Basic Template' ? (
+        {templateStyle === 'Minimalist Template' ? (
+          <MinimalistTemplate {...(props as P)} {...mergedProps} />
+        ) : templateStyle === 'New template one' ? (
+          <SimpleBusinessTemplate {...(props as P)} {...mergedProps} />
+        ) : templateStyle === 'Classic Template' ? (
+          <ClassicalTemplate {...(props as P)} {...mergedProps} />
+        ) : templateStyle === 'Modern Template' ? (
+          <ModernCompactTemplate {...(props as P)} {...mergedProps} />
+        ) : templateStyle === 'Black Minimal Template' ? (
+          <BlackMinimalTemplate {...(props as P)} {...mergedProps} />
+        ) : templateStyle === 'Basic Template' ? (
+          <BasicTemplate {...(props as P)} {...mergedProps} />
+        ) : templateStyle === 'Minimal Basic Template' ? (
           <MinimalBasicTemplate {...(props as P)} {...mergedProps} />
         ) : (
           <Component {...(props as P)} {...mergedProps} />

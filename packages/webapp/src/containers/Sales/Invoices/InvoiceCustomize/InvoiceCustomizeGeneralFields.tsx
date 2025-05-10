@@ -8,6 +8,7 @@ import {
   FSwitch,
   Group,
   Stack,
+  FSelect,
 } from '@/components';
 import { FColorInput } from '@/components/Forms/FColorInput';
 import { CreditCardIcon } from '@/icons/CreditCardIcon';
@@ -17,9 +18,47 @@ import { BrandingCompanyLogoUploadField } from '@/containers/ElementCustomize/co
 import { MANAGE_LINK_URL } from './constants';
 import { useDrawerContext } from '@/components/Drawer/DrawerProvider';
 import { useDrawerActions } from '@/hooks/state';
+import { useFormikContext } from 'formik';
+
+// Template style options
+const TEMPLATE_STYLE_OPTIONS = [
+  { text: 'Default Template', value: '' },
+  { text: 'Minimalist Template', value: 'Minimalist Template' },
+  { text: 'New template one', value: 'New template one' },
+  { text: 'Classic Template', value: 'Classic Template' },
+  { text: 'Modern Template', value: 'Modern Template' },
+  { text: 'Black Minimal Template', value: 'Black Minimal Template' },
+  { text: 'Minimal Basic Template', value: 'Minimal Basic Template' },
+];
 
 export function InvoiceCustomizeGeneralField() {
   const isTemplateNameFilled = useIsTemplateNamedFilled();
+  const { setFieldValue } = useFormikContext();
+
+  // Handle template style change 
+  const handleTemplateStyleChange = (templateName) => {
+    if (templateName === 'Minimalist Template') {
+      // Set the specific colors for Minimalist Template
+      setFieldValue('primaryColor', '#f9a048');
+      setFieldValue('secondaryColor', '#ffffff');
+    } else if (templateName === 'New template one') {
+      // Set the specific colors for Simple Business Template
+      setFieldValue('primaryColor', '#000000');
+      setFieldValue('secondaryColor', '#f5f5f5');
+    } else if (templateName === 'Classic Template') {
+      // Set the specific colors for Classical Template
+      setFieldValue('primaryColor', '#333333');
+      setFieldValue('secondaryColor', '#f5f5f5');
+    } else if (templateName === 'Modern Template') {
+      // Set the specific colors for Modern Compact Template
+      setFieldValue('primaryColor', '#3f51b5');
+      setFieldValue('secondaryColor', '#4b577e');
+    } else if (templateName === 'Minimal Basic Template') {
+      // Set the specific colors for Minimal Basic Template
+      setFieldValue('primaryColor', '#000000');
+      setFieldValue('secondaryColor', '#e1f3fa');
+    }
+  };
 
   return (
     <Stack style={{ padding: 20, flex: '1 1 auto' }}>
@@ -40,6 +79,21 @@ export function InvoiceCustomizeGeneralField() {
         style={{ marginBottom: 10 }}
       >
         <FInputGroup name={'templateName'} fastField />
+      </FFormGroup>
+
+      <FFormGroup
+        name={'templateStyle'}
+        label={'Template Style'}
+        fastField
+        style={{ marginBottom: 10 }}
+      >
+        <FSelect
+          name={'templateStyle'}
+          items={TEMPLATE_STYLE_OPTIONS}
+          fastField
+          onChange={(value) => handleTemplateStyleChange(value)}
+          popoverProps={{ minimal: true }}
+        />
       </FFormGroup>
 
       <Overlay visible={!isTemplateNameFilled}>

@@ -3,6 +3,14 @@ import { getTransactionTypeLabel } from '@/utils/transactions-types';
 
 export class GetPdfTemplateTransformer extends Transformer {
   /**
+   * Explicitly keeps these attributes (along with default ones).
+   * @returns {string[]}
+   */
+  public defaultAttributes = (): string[] => {
+    return ['id', 'templateName', 'resource', 'default', 'predefined', 'createdAt', 'updatedAt'];
+  };
+
+  /**
    * Included attributes.
    * @returns {string[]}
    */

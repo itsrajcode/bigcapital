@@ -965,3 +965,28 @@ export const filterAccountsByQuery = (accounts, queryProps) => {
   }
   return filteredAccounts;
 };
+
+/**
+ * Determines if a component should update when the base currency changes
+ * @param {Object} newProps - New props
+ * @param {Object} oldProps - Old props
+ * @returns {Boolean} - Whether the component should update
+ */
+export const shouldBaseCurrencyComponentUpdate = (newProps, oldProps) => {
+  // If organization context is different, update the component
+  if (
+    newProps.organization?.base_currency !== oldProps.organization?.base_currency
+  ) {
+    return true;
+  }
+  
+  // If currency code is provided and different, update the component
+  if (
+    newProps.currencyCode !== oldProps.currencyCode || 
+    newProps.currency !== oldProps.currency
+  ) {
+    return true;
+  }
+  
+  return false;
+};

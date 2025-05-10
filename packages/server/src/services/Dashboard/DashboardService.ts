@@ -57,6 +57,11 @@ interface IIncomeExpenseOverview {
   expense: number;
 }
 
+interface IDateRangeParams {
+  fromDate?: string;
+  toDate?: string;
+}
+
 @Service()
 export default class DashboardService {
   @Inject()
@@ -92,14 +97,29 @@ export default class DashboardService {
    * @param {number} tenantId
    * @param {ISystemUser} authorizedUser
    */
-  public getAnalytics = async (tenantId: number, authorizedUser: ISystemUser) => {
+  public getAnalytics = async (
+    tenantId: number, 
+    authorizedUser: ISystemUser,
+    dateParams?: IDateRangeParams
+  ) => {
     const { User, SaleInvoice, ItemEntry, Bill, Account, Expense } = this.tenancy.models(tenantId);
+
+    // Parse date parameters or use defaults (6 months ago to today)
+    const toDate = dateParams?.toDate ? moment(dateParams.toDate) : moment();
+    const fromDate = dateParams?.fromDate 
+      ? moment(dateParams.fromDate) 
+      : moment(toDate).subtract(5, 'months').startOf('month');
+    
+    console.log('[DashboardService] Using date range:', {
+      fromDate: fromDate.format('YYYY-MM-DD'),
+      toDate: toDate.format('YYYY-MM-DD')
+    });
 
     const tenantUser = await User.query()
       .findOne('systemUserId', authorizedUser.id)
       .withGraphFetched('role.permissions');
 
-    // Get top 10 selling items in the last 6 months
+    // Get top 10 selling items within the date range
     const topSellingItemsQuery = ItemEntry.query()
     .select(
       ItemEntry.knex().raw('`ITEMS_ENTRIES`.`ITEM_ID` AS `ID`'),
@@ -113,7 +133,10 @@ export default class DashboardService {
       ItemEntry.knex().raw('`SALES_INVOICES` ON `ITEMS_ENTRIES`.`REFERENCE_ID` = `SALES_INVOICES`.`ID` AND `ITEMS_ENTRIES`.`REFERENCE_TYPE` = \'SaleInvoice\'')
     )
     .where(
-      ItemEntry.knex().raw('`SALES_INVOICES`.`INVOICE_DATE` >= ?', [moment().subtract(6, 'months').toDate()])
+      ItemEntry.knex().raw('`SALES_INVOICES`.`INVOICE_DATE` >= ?', [fromDate.toDate()])
+    )
+    .where(
+      ItemEntry.knex().raw('`SALES_INVOICES`.`INVOICE_DATE` <= ?', [toDate.toDate()])
     )
     .groupBy(
       ItemEntry.knex().raw('`ITEMS_ENTRIES`.`ITEM_ID`, `ITEMS`.`NAME`')
@@ -122,9 +145,7 @@ export default class DashboardService {
       ItemEntry.knex().raw('SUM(`ITEMS_ENTRIES`.`QUANTITY`)'), 'DESC'
     )
     .limit(10);
-  
 
-     
     const topSellingItems = await topSellingItemsQuery.then(results => 
       results.map(item => ({
         id: item.id,
@@ -132,35 +153,33 @@ export default class DashboardService {
         quantity: Number(item.totalQuantity)
       }))
     );
-   
 
-    // Get income and expense overview for last 6 months
-    const currentDate = moment();
-    const sixMonthsAgo = moment().subtract(5, 'months').startOf('month');
+    // Calculate the number of months in the selected range
+    const startMonth = moment(fromDate).startOf('month');
+    const endMonth = moment(toDate).startOf('month');
+    const monthDiff = endMonth.diff(startMonth, 'months') + 1; // Include both start and end months
     
-    console.log('[DashboardService] Date Range:', {
-      currentDate: currentDate.format('YYYY-MM-DD'),
-      sixMonthsAgo: sixMonthsAgo.format('YYYY-MM-DD')
-    });
+    console.log('[DashboardService] Months to process:', monthDiff);
 
+    // Get income and expense overview for the date range
     const incomeExpenseOverview = await Promise.all(
-      Array.from({ length: 6 }, (_, i) => {
-        const month = moment(sixMonthsAgo).add(i, 'months');
-        const startDate = month.startOf('month').format('YYYY-MM-DD');
-        const endDate = month.endOf('month').format('YYYY-MM-DD');
+      Array.from({ length: monthDiff }, (_, i) => {
+        const month = moment(startMonth).add(i, 'months');
+        const monthStartDate = month.startOf('month').format('YYYY-MM-DD');
+        const monthEndDate = month.endOf('month').format('YYYY-MM-DD');
 
         console.log(`[DashboardService] Processing month ${i + 1}:`, {
           month: month.format('MMM YYYY'),
-          startDate,
-          endDate
+          monthStartDate,
+          monthEndDate
         });
 
         return Promise.all([
           // Get income for the month - using payment_amount for actual received income
           SaleInvoice.query()
             .sum('payment_amount as totalIncome')
-            .where('invoice_date', '>=', startDate)
-            .where('invoice_date', '<=', endDate)
+            .where('invoice_date', '>=', monthStartDate)
+            .where('invoice_date', '<=', monthEndDate)
             .first()
             .then(result => {
               console.log(`[DashboardService] Month ${month.format('MMM')} Income Raw:`, result);
@@ -177,8 +196,8 @@ export default class DashboardService {
             .select(
               Expense.knex().raw('COALESCE(SUM(total_amount), 0) * 100 as totalExpense')
             )
-            .where('payment_date', '>=', startDate)
-            .where('payment_date', '<=', endDate)
+            .where('payment_date', '>=', monthStartDate)
+            .where('payment_date', '<=', monthEndDate)
             .first()
             .then(result => {
               console.log(`[DashboardService] Month ${month.format('MMM')} Expense Raw:`, result);
@@ -211,7 +230,6 @@ export default class DashboardService {
       })
     );
     
-    
     // Use a direct raw query for more control
     const topUnpaidInvoices = await SaleInvoice.knex().raw(`
       SELECT 
@@ -231,7 +249,6 @@ export default class DashboardService {
       LIMIT 5
     `).then(result => result[0]);
     
-  
     // Get top 5 paid invoices
     const paidInvoices = await SaleInvoice.knex().raw(`
       SELECT 
@@ -252,24 +269,20 @@ export default class DashboardService {
       LIMIT 5
     `).then(result => result[0]);
     
-   
-
-
     // Get cash and bank balances
     const cashAndBankBalances = await Account.knex().raw(`
       SELECT 
         ACCOUNTS.ID as accountId,
         ACCOUNTS.NAME as accountName,
-        ACCOUNTS.BANK_BALANCE as balance
+        COALESCE(ACCOUNTS.BANK_BALANCE, 0) as balance
       FROM 
         ACCOUNTS
       WHERE
         ACCOUNTS.ACCOUNT_TYPE IN ('bank', 'cash')
       ORDER BY
-        ACCOUNTS.BANK_BALANCE DESC
+        ACCOUNTS.NAME ASC
       `).then(result => result[0]);
 
- 
     // Get invoice statuses count
     const invoiceStatuses = await SaleInvoice.knex().raw(`
       SELECT
@@ -285,8 +298,6 @@ export default class DashboardService {
       FROM SALES_INVOICES
       GROUP BY status
     `).then(result => result[0]);
-
-   
 
     return {
       tenantUser,

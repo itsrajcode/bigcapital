@@ -80,7 +80,7 @@ function ProjectsActionsBar({
         <Can I={ProjectAction.Create} a={AbilitySubject.Project}>
           <Button
             className={Classes.MINIMAL}
-            icon={<Icon icon="plus" />}
+            rightIcon={<Icon icon="plus" />}
             text={<T id={'projects.label.new_project'} />}
             onClick={handleNewProjectBtnClick}
           />

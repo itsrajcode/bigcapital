@@ -3,6 +3,9 @@ import { BrandingState, BrandingTemplateValues } from '@/containers/BrandingTemp
 export interface InvoiceCustomizeState extends BrandingState {}
 
 export interface InvoiceCustomizeFormValues extends BrandingTemplateValues {
+  // Template style
+  templateStyle?: string;
+  
   // Colors
   primaryColor?: string;
   secondaryColor?: string;

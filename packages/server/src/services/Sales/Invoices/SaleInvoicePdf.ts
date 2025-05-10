@@ -2,8 +2,13 @@ import { Inject, Service } from 'typedi';
 import {
   renderInvoicePaperTemplateHtml,
   renderMinimalBasicTemplateHtml,
+  renderModernCompactTemplateHtml,
+  renderClassicalTemplateHtml,
+  renderMinimalistTemplateHtml,
+  renderSimpleBusinessTemplateHtml,
+  renderBlackMinimalTemplateHtml,
+  renderBasicTemplateHtml,
   InvoicePaperTemplateProps,
-  MinimalBasicTemplate,
 } from '@bigcapital/pdf-templates';
 import { ChromiumlyTenancy } from '@/services/ChromiumlyTenancy/ChromiumlyTenancy';
 import { GetSaleInvoice } from './GetSaleInvoice';
@@ -45,17 +50,36 @@ export class SaleInvoicePdf {
       tenantId,
       invoiceId
     );
-    console.log('brandingAttributes', brandingAttributes);
-    if(brandingAttributes.templateName === 'Minimal Basic Template') {
-      console.log("fhir ek baar")
-      const data =  renderMinimalBasicTemplateHtml()
-      console.log("MINI",data)
-      return data
+    
+    // Debug: Log the template name being used
+    console.log("DEBUG - Template selection:", brandingAttributes.templateName);
+    
+    switch(brandingAttributes.templateName) {
+      case 'Minimal Basic Template':
+        console.log("Rendering: Minimal Basic Template");
+        return renderMinimalBasicTemplateHtml(brandingAttributes);
+      case 'Modern Template':
+        console.log("Rendering: Modern Template");
+        return renderModernCompactTemplateHtml(brandingAttributes);
+      case 'Classic Template':
+        console.log("Rendering: Classic Template");
+        return renderClassicalTemplateHtml(brandingAttributes);
+      case 'Minimalist Template':
+        console.log("Rendering: Minimalist Template");
+        return renderMinimalistTemplateHtml(brandingAttributes);
+      case 'New template one':
+        console.log("Rendering: New template one");
+        return renderSimpleBusinessTemplateHtml(brandingAttributes);
+      case 'Black Minimal Template':
+        console.log("Rendering: Black Minimal Template");
+        return renderBlackMinimalTemplateHtml(brandingAttributes);
+      case 'Basic Template':
+        console.log("Rendering: Basic Template");
+        return renderBasicTemplateHtml(brandingAttributes);
+      default:
+        console.log("Rendering: Default template (no match found)");
+        return renderInvoicePaperTemplateHtml(brandingAttributes);
     }
-    const data =  renderInvoicePaperTemplateHtml(brandingAttributes);
-    console.log("data",data)
-    return data;
-   
   }
 
   /**
@@ -115,12 +139,14 @@ export class SaleInvoicePdf {
     invoiceId: number
   ): Promise<InvoicePaperTemplateProps> {
     const { PdfTemplate } = this.tenancy.models(tenantId);
-    console.log("data form backend",PdfTemplate)
+    
     // Get the invoice from the database.
     const invoice = await this.getInvoiceService.getSaleInvoice(
       tenantId,
       invoiceId
     );
+    
+    console.log("Invoice pdfTemplateId:", invoice.pdfTemplateId);
     
     // Add minimal basic template option
     const templateId = invoice.pdfTemplateId ?? (
@@ -130,6 +156,8 @@ export class SaleInvoicePdf {
       })
     )?.id;
     
+    console.log("Using templateId:", templateId);
+    
     //  Getting the branding template attributes.
     const brandingTemplate =
       await this.invoiceBrandingTemplateService.getInvoicePdfTemplate(
@@ -137,22 +165,17 @@ export class SaleInvoicePdf {
         templateId
       );
 
-      console.log("templateId",brandingTemplate.templateName)
-    // Merge the branding template attributes with the invoice.
-    if (brandingTemplate.templateName === 'Minimal Basic Template') {
-      console.log("hsdgfjhgsd")
-      const minimalTemplateProps = {
-        ...brandingTemplate.attributes,
-        ...transformInvoiceToPdfTemplate(invoice),
-      };
-      
-      // Pass the merged data to the render function
-      minimalTemplateProps['templateName'] = brandingTemplate.templateName;
-      return minimalTemplateProps
-    }
-    return {
+    console.log("Brand template name from service:", brandingTemplate.templateName);
+    
+    // Merge the branding template attributes with the invoice data
+    const templateProps = {
       ...brandingTemplate.attributes,
       ...transformInvoiceToPdfTemplate(invoice),
+      templateName: brandingTemplate.templateName, // Add templateName explicitly
     };
+    
+    console.log("Final templateName being passed to renderer:", templateProps.templateName);
+    
+    return templateProps;
   }
 }

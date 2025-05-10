@@ -119,8 +119,31 @@ export default function InventoryAdjustmentFormDialogFields() {
               items={items}
               initialItemId={field.value}
               selectedItemId={field.value}
-              onItemSelected={({ id }) => {
-                form.setFieldValue('item_id', id);
+              onItemSelected={(item) => {
+                console.log('Item selected:', item);
+                
+                if (!item || !item.id) {
+                  console.error('Invalid item selected');
+                  return;
+                }
+                
+                // Update the item ID
+                form.setFieldValue('item_id', item.id);
+                
+                // Update the quantity on hand from the selected item
+                if (item.quantity_on_hand !== undefined) {
+                  console.log('Setting quantity_on_hand from selected item:', item.quantity_on_hand);
+                  const qtyOnHand = toSafeNumber(item.quantity_on_hand);
+                  form.setFieldValue('quantity_on_hand', qtyOnHand);
+                  
+                  // Reset quantity field
+                  form.setFieldValue('quantity', '');
+                  
+                  // Set new_quantity initially equal to quantity_on_hand
+                  form.setFieldValue('new_quantity', qtyOnHand);
+                } else {
+                  console.warn('Selected item has no quantity_on_hand value');
+                }
               }}
               allowCreate={false}
               inputProps={{

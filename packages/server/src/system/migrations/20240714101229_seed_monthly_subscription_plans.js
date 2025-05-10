@@ -1,8 +1,8 @@
 exports.up = function (knex) {
   return knex('subscription_plans').insert([
-    // Capital Basic
+    // Ease Basic
     {
-      name: 'Capital Basic (Monthly)',
+      name: 'Ease Basic (Monthly)',
       slug: 'capital-basic-monthly',
       price: 10,
       active: true,
@@ -13,7 +13,7 @@ exports.up = function (knex) {
       // lemon_variant_id: '450016',
     },
     {
-      name: 'Capital Basic (Annually)',
+      name: 'Ease Basic (Annually)',
       slug: 'capital-basic-annually',
       price: 90,
       active: true,
@@ -24,9 +24,9 @@ exports.up = function (knex) {
       // lemon_variant_id: '450018',
     },
 
-    // # Capital Essential
+    // # Ease Essential
     {
-      name: 'Capital Essential (Monthly)',
+      name: 'Ease Essential (Monthly)',
       slug: 'capital-essential-monthly',
       price: 20,
       active: true,
@@ -37,7 +37,7 @@ exports.up = function (knex) {
       // lemon_variant_id: '450028',
     },
     {
-      name: 'Capital Essential (Annually)',
+      name: 'Ease Essential (Annually)',
       slug: 'capital-essential-annually',
       price: 180,
       active: true,
@@ -47,9 +47,9 @@ exports.up = function (knex) {
       // lemon_variant_id: '450029',
     },
 
-    // # Capital Plus
+    // # Ease Plus
     {
-      name: 'Capital Plus (Monthly)',
+      name: 'Ease Plus (Monthly)',
       slug: 'capital-plus-monthly',
       price: 25,
       active: true,
@@ -59,7 +59,7 @@ exports.up = function (knex) {
       // lemon_variant_id: '450031',
     },
     {
-      name: 'Capital Plus (Annually)',
+      name: 'Ease Plus (Annually)',
       slug: 'capital-plus-annually',
       price: 228,
       active: true,
@@ -69,9 +69,9 @@ exports.up = function (knex) {
       // lemon_variant_id: '450032',
     },
 
-    // # Capital Big
+    // # Ease Big
     {
-      name: 'Capital Big (Monthly)',
+      name: 'Ease Big (Monthly)',
       slug: 'capital-big-monthly',
       price: 40,
       active: true,
@@ -81,7 +81,7 @@ exports.up = function (knex) {
       // lemon_variant_id: '450024',
     },
     {
-      name: 'Capital Big (Annually)',
+      name: 'Ease Big (Annually)',
       slug: 'capital-big-annually',
       price: 360,
       active: true,

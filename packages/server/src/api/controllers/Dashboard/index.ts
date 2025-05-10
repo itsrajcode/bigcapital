@@ -59,11 +59,21 @@ export default class DashboardMetaController {
   ) => {
     const authorizedUser = req.user;
     const { tenantId } = req;
+    
+    // Extract date range parameters from query string
+    const { from_date, to_date } = req.query;
+    const dateParams = {
+      fromDate: from_date ? String(from_date) : undefined,
+      toDate: to_date ? String(to_date) : undefined
+    };
+    
+    console.log('[DashboardController] Date params:', dateParams);
 
     try {
       const analytics_dashboard_data = await this.dashboardService.getAnalytics(
         tenantId,
-        authorizedUser
+        authorizedUser,
+        dateParams
       );
 
       return res.status(200).send({ analytics_dashboard_data });

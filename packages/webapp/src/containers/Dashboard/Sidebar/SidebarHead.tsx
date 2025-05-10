@@ -21,17 +21,25 @@ function SidebarHeadJSX({
 }) {
   // Retrieve authenticated user information.
   const { data: user } = useAuthenticatedAccount();
+  
+  // Get the first letter of organization name for minimized sidebar
+  const firstLetter = organization.name ? organization.name.charAt(0).toUpperCase() : '';
 
   return (
     <div className="sidebar__head">
+      {/* Company initial for minimized sidebar */}
+      <div className="sidebar__head-logo">
+        <div className="org-initial">{firstLetter}</div>
+      </div>
+      
       <div className="sidebar__head-organization">
-        
-          <Button
-            className="title"
-            rightIcon={<Icon icon={'caret-down-16'} size={16} />}
-          >
-            {organization.name}
-          </Button>
+        <Button
+          className="title"
+          rightIcon={<Icon icon={'caret-down-16'} size={16} />}
+          title={organization.name}
+        >
+          {organization.name}
+        </Button>
       </div>
     </div>
   );

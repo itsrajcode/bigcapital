@@ -30,7 +30,7 @@ function InventoryAdjustmentFormProvider({ itemId, dialogName, children }) {
   const { isFetching: isAccountsLoading, data: accounts = [] } = useAccounts();
 
   // Check if itemId is valid (not undefined, null, or empty string)
-  const isValidItemId = itemId && itemId !== '' && itemId !== 'undefined';
+  const isValidItemId = itemId && itemId !== '' && itemId !== 'undefined' && itemId !== 'null';
 
   // Fetches the item details - make it non-blocking by setting enabled to false if itemId is not provided
   const { isFetching: isItemLoading, data: item = {} } = useItem(

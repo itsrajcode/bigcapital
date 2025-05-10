@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import intl from 'react-intl-universal';
 import moment from 'moment';
 import { Intent } from '@blueprintjs/core';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import { omit, get } from 'lodash';
 
 import '@/style/pages/Items/ItemAdjustmentDialog.scss';
@@ -15,7 +15,7 @@ import InventoryAdjustmentFormContent from './InventoryAdjustmentFormContent';
 import { useInventoryAdjContext } from './InventoryAdjustmentFormProvider';
 
 import withDialogActions from '@/containers/Dialog/withDialogActions';
-import { compose } from '@/utils';
+import { compose, toSafeNumber } from '@/utils';
 
 const defaultInitialValues = {
   date: moment(new Date()).format('YYYY-MM-DD'),
@@ -27,11 +27,39 @@ const defaultInitialValues = {
   quantity: '',
   reference_no: '',
   quantity_on_hand: '',
+  new_quantity: '',
   description: '',
   publish: '',
   branch_id: '',
   warehouse_id: '',
 };
+
+/**
+ * Form values updater when item changes
+ */
+function FormValuesUpdater() {
+  const { values, setFieldValue } = useFormikContext();
+  const { item } = useInventoryAdjContext();
+
+  // Update quantity_on_hand when item changes
+  useEffect(() => {
+    console.log('Item data from context:', item);
+    
+    if (item && item.id && item.quantity_on_hand !== undefined) {
+      console.log('Setting quantity_on_hand to:', item.quantity_on_hand);
+      
+      const qtyOnHand = toSafeNumber(item.quantity_on_hand);
+      setFieldValue('quantity_on_hand', qtyOnHand);
+      
+      // If no quantity value set yet, also initialize new_quantity
+      if (!values.quantity) {
+        setFieldValue('new_quantity', qtyOnHand);
+      }
+    }
+  }, [item, setFieldValue, values.quantity]);
+
+  return null;
+}
 
 /**
  * Inventory adjustment form.
@@ -43,17 +71,22 @@ function InventoryAdjustmentForm({
   const { dialogName, item, itemId, submitPayload, createInventoryAdjMutate } =
     useInventoryAdjContext();
 
+  console.log('Initial item data:', item);
+  console.log('Initial itemId:', itemId);
+
   // Initial form values.
   const initialValues = {
     ...defaultInitialValues,
-    item_id: itemId && itemId !== 'undefined' ? itemId : '',
-    quantity_on_hand: get(item, 'quantity_on_hand', 0),
+    item_id: itemId && itemId !== 'undefined' && itemId !== 'null' ? itemId : '',
+    quantity_on_hand: item && item.quantity_on_hand !== undefined ? toSafeNumber(item.quantity_on_hand) : 0,
   };
+
+  console.log('Initial form values:', initialValues);
 
   // Handles the form submit.
   const handleFormSubmit = (values, { setSubmitting, setErrors }) => {
     // Check if an item is selected - if not, show an error
-    if (!values.item_id || values.item_id === 'undefined') {
+    if (!values.item_id || values.item_id === 'undefined' || values.item_id === 'null') {
       AppToaster.show({
         message: intl.get('please_select_an_item_for_adjustment'),
         intent: Intent.DANGER,
@@ -116,7 +149,10 @@ function InventoryAdjustmentForm({
       onSubmit={handleFormSubmit}
       enableReinitialize={true}
     >
-      <InventoryAdjustmentFormContent />
+      <>
+        <FormValuesUpdater />
+        <InventoryAdjustmentFormContent />
+      </>
     </Formik>
   );
 }

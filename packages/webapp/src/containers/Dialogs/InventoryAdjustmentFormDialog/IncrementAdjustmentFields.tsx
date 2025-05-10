@@ -14,23 +14,27 @@ export default function IncrementAdjustmentFields() {
     <Row>
       {/*------------ Quantity on hand  -----------*/}
       <Col className={'col--quantity-on-hand'}>
-        <FastField name={'quantity_on_hand'}>
-          {({ field, meta: { error, touched } }) => (
+        <Field name={'quantity_on_hand'}>
+          {({ field, form, meta: { error, touched } }) => (
             <FormGroup
               label={<T id={'qty_on_hand'} />}
               intent={inputIntent({ error, touched })}
               helperText={<ErrorMessage name="quantity_on_hand" />}
             >
-              <InputGroup
+              <MoneyInputGroup
                 disabled={true}
-                medium={'true'}
-                intent={inputIntent({ error, touched })}
-                {...field}
                 value={field.value || '0'}
+                allowDecimals={false}
+                allowNegativeValue={false}
+                intent={inputIntent({ error, touched })}
+                onChange={(value) => {
+                  console.log('Quantity on hand changed:', value);
+                  form.setFieldValue('quantity_on_hand', value);
+                }}
               />
             </FormGroup>
           )}
-        </FastField>
+        </Field>
       </Col>
 
       {/*------------ Sign -----------*/}

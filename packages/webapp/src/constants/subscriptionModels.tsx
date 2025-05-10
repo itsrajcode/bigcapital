@@ -20,7 +20,7 @@ interface SubscriptionPlan {
 
 export const SubscriptionPlans = [
   {
-    name: 'Capital Basic',
+    name: 'Ease Basic',
     slug: 'capital_basic',
     description: 'Good for service businesses that just started.',
     features: [
@@ -54,11 +54,11 @@ export const SubscriptionPlans = [
     // annuallyVariantId: '450018',
   },
   {
-    name: 'Capital Essential',
+    name: 'Ease Essential',
     slug: 'capital_plus',
     description: 'Good for have inventory and want more financial reports.',
     features: [
-      { text: 'All Capital Basic features' },
+      { text: 'All Ease Basic features' },
       { text: 'Purchase Invoices' },
       {
         text: 'Multi Currency Transactions',
@@ -88,11 +88,11 @@ export const SubscriptionPlans = [
     annuallyVariantId: '446156',
   },
   {
-    name: 'Capital Plus',
+    name: 'Ease Plus',
     slug: 'essentials',
     description: 'Good for business want financial and access control.',
     features: [
-      { text: 'All Capital Essential features' },
+      { text: 'All Ease Essential features' },
       { text: 'Custom User Roles Access' },
       { text: 'Vendor Credits' },
       {
@@ -112,11 +112,11 @@ export const SubscriptionPlans = [
     annuallyVariantId: '446164',
   },
   {
-    name: 'Capital Big',
+    name: 'Ease Big',
     slug: 'essentials',
     description: 'Good for businesses have multiple branches.',
     features: [
-      { text: 'All Capital Plus features' },
+      { text: 'All Ease Plus features' },
       {
         text: 'Multiple Branches',
         hintLabel: '',

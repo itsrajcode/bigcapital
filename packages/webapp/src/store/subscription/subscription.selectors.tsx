@@ -2,7 +2,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { includes } from 'lodash';
 
-const subscriptionSelector = (slug) => (state, props) => {
+// This remains unexported and is specific in its signature (state, props)
+const subscriptionSelectorInternal = (slug) => (state, props) => {
   const subscriptions = Object.values(state.subscriptions.data);
   return subscriptions.find(
     (subscription) => subscription.slug === (slug || props.subscriptionType),
@@ -18,22 +19,36 @@ const subscriptionsSelector = (state, props) => {
   );
 };
 
+// Corrected getSubscriptionFactory
+export const getSubscriptionFactory = (slug) => 
+  createSelector(
+    (state) => state.subscriptions.data, // Input selector: gets all subscriptions data
+    (subscriptionsData) => { // Combiner function
+      if (!subscriptionsData) return null;
+      const subscriptions = Object.values(subscriptionsData);
+      return subscriptions.find(sub => sub.slug === slug) || null;
+    }
+  );
+
 export const isSubscriptionOnTrialFactory = (slug) =>
   createSelector(
-    subscriptionSelector(slug),
+    getSubscriptionFactory(slug), // Use the new factory here for consistency
     (subscription) => subscription?.status === 'on_trial',
   );
 
 export const isSubscriptionActiveFactory = (slug) =>
-  createSelector(subscriptionSelector(slug), (subscription) => {
+  createSelector(getSubscriptionFactory(slug), (subscription) => { // Use the new factory
     return subscription?.status === 'active';
   });
 
 export const isSubscriptionInactiveFactory = (slug) =>
   createSelector(
-    subscriptionSelector(slug),
+    getSubscriptionFactory(slug), // Use the new factory
     (subscription) => subscription?.status === 'inactive' || !subscription,
   );
+
+// These selectors take props, so their internal logic might differ or need to be adjusted
+// For now, focusing on the ones using a simple slug
 
 export const isSubscriptionsInactiveFactory = () =>
   createSelector(subscriptionsSelector, (subscriptions) =>

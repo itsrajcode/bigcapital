@@ -30,11 +30,105 @@ import { UnpaidInvoicesTable } from './components/UnpaidInvoicesTable';
 import { DataSummaryTable } from './components/DataSummaryTable';
 import { useQuery } from 'react-query';
 import { useDashboardAnalytics } from '@/services/dashboard';
-import { Spinner } from '@blueprintjs/core';
+import { Spinner, Button, MenuItem, Menu, Popover, Position, Dialog, Classes, FormGroup, InputGroup } from '@blueprintjs/core';
+import { useCurrentOrganization } from '@/hooks/state';
+
+// Date range options
+const DATE_RANGES = [
+  { label: 'Last 3 Months', value: 3 },
+  { label: 'Last 6 Months', value: 6 },
+  { label: 'Last 12 Months', value: 12 },
+  { label: 'Year to Date', value: 'ytd' },
+  { label: 'Custom...', value: 'custom' }
+];
 
 function HomepageContent() {
+  // Date range state
+  const [selectedDateRange, setSelectedDateRange] = useState(DATE_RANGES[1]); // Default to 6 months
+  const [isCustomDatePickerOpen, setIsCustomDatePickerOpen] = useState(false);
+  const [customDateRange, setCustomDateRange] = useState({
+    fromDate: '',
+    toDate: '',
+  });
+  
+  // Function to get date range parameters based on selection
+  const getDateRangeParams = (range) => {
+    const today = new Date();
+    let fromDate;
+    
+    if (range.value === 'custom' && customDateRange.fromDate && customDateRange.toDate) {
+      return {
+        from_date: customDateRange.fromDate,
+        to_date: customDateRange.toDate
+      };
+    } else if (range.value === 'ytd') {
+      // Year to date
+      fromDate = new Date(today.getFullYear(), 0, 1);
+    } else if (typeof range.value === 'number') {
+      // Last X months
+      fromDate = new Date();
+      fromDate.setMonth(today.getMonth() - range.value);
+    } else {
+      // Default to 6 months if custom or other
+      fromDate = new Date();
+      fromDate.setMonth(today.getMonth() - 6);
+    }
+    
+    return {
+      from_date: fromDate.toISOString().split('T')[0],
+      to_date: today.toISOString().split('T')[0]
+    };
+  };
 
-  const { data, isLoading, error } = useDashboardAnalytics();
+  // Construct query parameters based on selected date range
+  const dateParams = getDateRangeParams(selectedDateRange);
+  
+  // Fetch analytics data with date parameters
+  const { data, isLoading, error, refetch } = useDashboardAnalytics({
+    params: dateParams
+  });
+  
+  const organization = useCurrentOrganization();
+  const baseCurrency = organization?.base_currency || 'USD';
+  
+  // Date range selection handler
+  const handleDateRangeChange = (range) => {
+    if (range.value === 'custom') {
+      setIsCustomDatePickerOpen(true);
+    } else {
+      setSelectedDateRange(range);
+    }
+  };
+  
+  // Custom date range handlers
+  const handleCustomDateApply = () => {
+    if (customDateRange.fromDate && customDateRange.toDate) {
+      setSelectedDateRange({
+        ...selectedDateRange,
+        label: `${customDateRange.fromDate} to ${customDateRange.toDate}`,
+        value: 'custom'
+      });
+      setIsCustomDatePickerOpen(false);
+    }
+  };
+  
+  const handleCustomDateCancel = () => {
+    setIsCustomDatePickerOpen(false);
+  };
+  
+  const handleFromDateChange = (e) => {
+    setCustomDateRange({
+      ...customDateRange,
+      fromDate: e.target.value
+    });
+  };
+  
+  const handleToDateChange = (e) => {
+    setCustomDateRange({
+      ...customDateRange,
+      toDate: e.target.value
+    });
+  };
   
   // Add detailed logging to see the exact API response
   console.log('[HomepageContent] Full API Response:', data);
@@ -122,6 +216,20 @@ function HomepageContent() {
   //   { type: 'added', user: 'You', reference: 'INV/211', customer: 'customer', amount: '0.00', time: '1d ago' },
   // ];
 
+  // Date range menu component
+  const DateRangeMenu = (
+    <Menu>
+      {DATE_RANGES.map((range) => (
+        <MenuItem 
+          key={range.value} 
+          text={range.label} 
+          active={selectedDateRange.value === range.value}
+          onClick={() => handleDateRangeChange(range)}
+        />
+      ))}
+    </Menu>
+  );
+
   return (
     <div className="homepage__analytics" style={{ backgroundColor: '#f8f7f7' }}>
       <div className="dashboard__main-content">
@@ -131,20 +239,15 @@ function HomepageContent() {
           <div className="analytics__overview">
             <div className="overview__header">
               <h2 className="overview__title">Income and Expense Overview</h2>
-              <div>
-                Last 6 Months
-              </div>
-              {/* <button className="overview__period-selector">
-                Last 6 Months
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path
-                    d="M3 4.5L6 7.5L9 4.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button> */}
+              <Popover content={DateRangeMenu} position={Position.BOTTOM}>
+                <Button 
+                  className="overview__period-selector" 
+                  rightIcon="caret-down"
+                  small={true}
+                >
+                  {selectedDateRange.label}
+                </Button>
+              </Popover>
             </div>
 
             <div className="overview__stats">
@@ -159,7 +262,7 @@ function HomepageContent() {
                     />
                   </svg>
                 </div>
-                <span>Income: INR {totalIncome.toLocaleString('en-IN')}</span>
+                <span>Income: {baseCurrency} {totalIncome.toLocaleString('en-IN')}</span>
               </div>
               <div className="stats__expense">
                 <div className="stats__icon">
@@ -172,7 +275,7 @@ function HomepageContent() {
                     />
                   </svg>
                 </div>
-                <span>Expense: INR {totalExpense.toLocaleString('en-IN')}</span>
+                <span>Expense: {baseCurrency} {totalExpense.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
@@ -189,9 +292,6 @@ function HomepageContent() {
 
         {/* Right column */}
         <div className="dashboard__right-column">
-
-         
-
           {/* Invoices By Status */}
           <div className="analytics__invoices">
             <h2 className="invoices__title">Invoices By Status</h2>
@@ -216,8 +316,6 @@ function HomepageContent() {
             </div>
           </div>
         </div>
-
-        
       </div>
 
       {/* Tables section - full width */}
@@ -226,7 +324,7 @@ function HomepageContent() {
           title="Top 5 Unpaid Invoices"
           columns={[
             { key: 'customer', label: 'Customer' },
-            { key: 'value', label: 'Value(INR)' },
+            { key: 'value', label: `Value(${baseCurrency})` },
             { key: 'overdue', label: 'Overdue' }
           ]}
           data={unpaidInvoicesData}
@@ -238,7 +336,7 @@ function HomepageContent() {
             { key: 'account', label: 'Account' },
             { 
               key: 'value', 
-              label: 'Value(INR)',
+              label: `Value(${baseCurrency})`,
               render: (value) => (
                 <span className={parseFloat(value.replace(/,/g, '')) < 0 ? 'negative-value' : ''}>
                   {value}
@@ -249,6 +347,51 @@ function HomepageContent() {
           data={cashBankBalancesData}
         />
       </div>
+      
+      {/* Custom Date Range Dialog */}
+      <Dialog
+        isOpen={isCustomDatePickerOpen}
+        onClose={handleCustomDateCancel}
+        title="Custom Date Range"
+        className="custom-date-dialog"
+      >
+        <div className={Classes.DIALOG_BODY}>
+          <FormGroup
+            label="From Date"
+            labelFor="from-date"
+          >
+            <InputGroup
+              id="from-date"
+              type="date"
+              value={customDateRange.fromDate}
+              onChange={handleFromDateChange}
+            />
+          </FormGroup>
+          <FormGroup
+            label="To Date"
+            labelFor="to-date"
+          >
+            <InputGroup
+              id="to-date"
+              type="date"
+              value={customDateRange.toDate}
+              onChange={handleToDateChange}
+            />
+          </FormGroup>
+        </div>
+        <div className={Classes.DIALOG_FOOTER}>
+          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+            <Button onClick={handleCustomDateCancel}>Cancel</Button>
+            <Button 
+              intent="primary" 
+              onClick={handleCustomDateApply}
+              disabled={!customDateRange.fromDate || !customDateRange.toDate}
+            >
+              Apply
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

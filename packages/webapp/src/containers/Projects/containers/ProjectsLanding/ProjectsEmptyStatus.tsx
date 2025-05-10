@@ -31,8 +31,9 @@ function ProjectsEmptyStatus({
               intent={Intent.PRIMARY}
               large={true}
               onClick={handleNewProjectClick}
+              icon="add"
             >
-              <T id="projects.empty_status.action" />
+              New Project
             </Button>
             <Button intent={Intent.NONE} large={true}>
               <T id={'learn_more'} />

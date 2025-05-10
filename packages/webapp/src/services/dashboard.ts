@@ -23,25 +23,38 @@ export interface DashboardAnalyticsResponse {
   }
 }
 
+// Define date range parameters interface
+export interface DashboardAnalyticsParams {
+  from_date?: string;
+  to_date?: string;
+  [key: string]: any; // Allow for other parameters
+}
+
 /**
  * Custom hook to fetch dashboard analytics data.
- * @param options Optional react-query options.
+ * @param options Optional configuration including params for date filtering.
  * @returns Query result object for dashboard analytics.
  */
 export function useDashboardAnalytics(
-  options?: UseQueryOptions<
-    DashboardAnalyticsResponse, // Query function return type
-    Error, // Error type
-    DashboardAnalyticsResponse // Data type returned by useQuery
+  options?: {
+    params?: DashboardAnalyticsParams;
+  } & UseQueryOptions<
+    DashboardAnalyticsResponse, 
+    Error, 
+    DashboardAnalyticsResponse
   >,
 ): UseQueryResult<DashboardAnalyticsResponse, Error> {
   const apiRequest = useApiRequest();
+  const params = options?.params || {};
 
   return useQuery<DashboardAnalyticsResponse, Error, DashboardAnalyticsResponse>(
-    [QueryKeys.DashboardAnalytics], // Unique query key
+    [QueryKeys.DashboardAnalytics, params], // Include params in the query key for proper refetching
     async () => {
-      const response = await apiRequest.get('dashboard/analytics', {});
+      const response = await apiRequest.get('dashboard/analytics', { 
+        params // Pass date range parameters to the API
+      });
       console.log('[DashboardService] Raw API Response:', response.data);
+      console.log('[DashboardService] Query Params:', params);
       // Return the raw data without transformation
       return response.data;
     },
