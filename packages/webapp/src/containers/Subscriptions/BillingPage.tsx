@@ -2,10 +2,9 @@
 import { useEffect } from 'react';
 import * as R from 'ramda';
 import { Redirect } from 'react-router-dom';
-import { BillingPageBoot } from './BillingPageBoot';
+import { BillingPageBoot, useBillingPageBoot } from './BillingPageBoot';
 import { BillingPageContent } from './BillingPageContent';
 import { useDashboardMeta } from '@/hooks/query';
-import { useSubscription } from '@/hooks/state/subscriptions';
 import withAlertActions from '../Alert/withAlertActions';
 import withDashboardActions from '../Dashboard/withDashboardActions';
 import { Box, Card } from '@/components';
@@ -24,9 +23,25 @@ function BillingPageRoot({
     keepPreviousData: true,
   });
   
-  const { isSubscriptionActive, isSubscriptionOnTrial } = useSubscription('main');
+  const { mainSubscription, isSubscriptionsLoading } = useBillingPageBoot();
   const { setIsFirstPlan } = useChangeSubscriptionPlanStore();
-  const hasExpired = !isSubscriptionActive && !isSubscriptionOnTrial;
+  
+  let hasExpired = false;
+  
+  if (isSubscriptionsLoading) {
+    hasExpired = false;
+    console.log('[DEBUG] BillingPage: Subscriptions are loading...');
+  } else if (!mainSubscription) {
+    hasExpired = true;
+    console.log('[DEBUG] BillingPage: No mainSubscription found');
+  } else {
+    const isActive = mainSubscription.active === true;
+    const isOnTrial = mainSubscription.on_trial === true || mainSubscription.status === 'on_trial';
+    
+    hasExpired = !isActive && !isOnTrial;
+    console.log(`[DEBUG] BillingPage: mainSubscription status check - active: ${isActive}, onTrial: ${isOnTrial}, hasExpired: ${hasExpired}`);
+    console.log('[DEBUG] mainSubscription:', mainSubscription);
+  }
 
   useEffect(() => {
     const title = hasExpired 

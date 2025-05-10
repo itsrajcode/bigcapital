@@ -20,8 +20,28 @@ function checkSubscriptionStatus(subscriptionsRes: any) {
   const subscriptions = Array.isArray(subscriptionsRes?.subscriptions)
     ? subscriptionsRes.subscriptions
     : [];
-  // Find main subscription or return null if not found
-  return subscriptions.find((s: any) => s.slug === 'main') || null;
+  console.log('[DEBUG] subscriptions:', subscriptions);
+  // Prioritize the active 'main' subscription
+  const activeMainSubscription = subscriptions.find(
+    (s: any) => s.slug === 'main' && s.active === true
+  );
+
+  if (activeMainSubscription) {
+    console.log('[DEBUG] Found active main subscription:', activeMainSubscription);
+    return activeMainSubscription;
+  }
+
+  // Fallback: if no *active* 'main' subscription,
+  // return the first 'main' subscription found (which might be expired/cancelled).
+  // The UI (like in BillingPage.tsx with its 'hasExpired' logic) should use the
+  // active status from this returned object to make final display decisions.
+  const firstMainSubscription = subscriptions.find((s: any) => s.slug === 'main') || null;
+  if (firstMainSubscription) {
+    console.log('[DEBUG] No active main subscription found. Falling back to first main subscription (could be inactive/canceled):', firstMainSubscription);
+  } else {
+    console.log('[DEBUG] No main subscription found at all (slug=\'main\').');
+  }
+  return firstMainSubscription;
 }
 export function BillingPageBoot({ children }: BillingPageBootProps) {
   const {
@@ -32,6 +52,7 @@ export function BillingPageBoot({ children }: BillingPageBootProps) {
   console.log('subscriptionsRes', subscriptionsRes);
 
   const mainSubscription = checkSubscriptionStatus(subscriptionsRes);
+  console.log('[DEBUG] mainSubscription:', mainSubscription);
 
   const value = {
     isSubscriptionsLoading,

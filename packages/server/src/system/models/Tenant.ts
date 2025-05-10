@@ -201,6 +201,13 @@ export default class Tenant extends BaseModel {
     subscriptionSlug,
     payload?,
   ) {
+    console.log('[DEBUG] Instance newSubscription called with:');
+    console.log('[DEBUG] - planId:', planId);
+    console.log('[DEBUG] - invoiceInterval:', invoiceInterval);
+    console.log('[DEBUG] - invoicePeriod:', invoicePeriod);
+    console.log('[DEBUG] - subscriptionSlug:', subscriptionSlug);
+    console.log('[DEBUG] - payload:', JSON.stringify(payload));
+    
     return Tenant.newSubscription(
       this.id,
       planId,
@@ -214,7 +221,7 @@ export default class Tenant extends BaseModel {
   /**
    * Records a new subscription for the associated tenant.
    */
-  static newSubscription(
+  static async newSubscription(
     tenantId: number,
     planId: number,
     invoiceInterval: 'month' | 'year',
@@ -222,16 +229,53 @@ export default class Tenant extends BaseModel {
     subscriptionSlug: string,
     payload?: { lemonSqueezyId: string }
   ) {
+    console.log('[DEBUG] Static newSubscription called with:');
+    console.log('[DEBUG] - tenantId:', tenantId);
+    console.log('[DEBUG] - planId:', planId);
+    console.log('[DEBUG] - invoiceInterval:', invoiceInterval);
+    console.log('[DEBUG] - invoicePeriod:', invoicePeriod);
+    console.log('[DEBUG] - subscriptionSlug:', subscriptionSlug);
+    console.log('[DEBUG] - payload:', JSON.stringify(payload));
+    
+    // Extract the lemonSqueezyId from the payload
+    const lemonSqueezyId = payload?.lemonSqueezyId;
+    console.log('[DEBUG] LemonSqueezyId to be used:', lemonSqueezyId);
+    
     const period = new SubscriptionPeriod(invoiceInterval, invoicePeriod);
+    console.log('[DEBUG] Start Date:', period.getStartDate());
+    console.log('[DEBUG] End Date:', period.getEndDate());
+    
+    // Check if tenant already has any subscriptions (past or present)
+    const existingSubscriptions = await PlanSubscription.query()
+      .where('tenantId', tenantId);
+    
+    const hasExistingSubscriptions = existingSubscriptions.length > 0;
+    console.log('[DEBUG] Tenant has existing subscriptions:', hasExistingSubscriptions);
+    
+    // Only apply trial period for first subscription
+    let trialEndsAt = null;
+    if (!hasExistingSubscriptions) {
+      // This is the first subscription, so apply trial period
+      trialEndsAt = moment(period.getStartDate()).add(14, 'days').toDate();
+      console.log('[DEBUG] First subscription for tenant - applying trial period. Trial ends at:', trialEndsAt);
+    } else {
+      // This is not the first subscription, no trial period
+      console.log('[DEBUG] Not the first subscription for tenant - no trial period applied.');
+    }
 
-    return PlanSubscription.query().insert({
+    // Create the insertion data
+    const insertData = {
       tenantId,
       slug: subscriptionSlug,
       planId,
       startsAt: period.getStartDate(),
       endsAt: period.getEndDate(),
-      lemonSubscriptionId: payload?.lemonSqueezyId || null,
-      trialEndsAt: moment(period.getStartDate()).add(14, 'days').toDate()
-    });
+      lemonSubscriptionId: lemonSqueezyId || null,
+      trialEndsAt: trialEndsAt
+    };
+    
+    console.log('[DEBUG] Insertion data for subscription:', JSON.stringify(insertData));
+    
+    return PlanSubscription.query().insert(insertData);
   }
 }

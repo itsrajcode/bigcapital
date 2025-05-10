@@ -47,7 +47,7 @@ export class GetSubscriptionsTransformer extends Transformer {
    * @returns {string}
    */
   public endsAtFormatted = (subscription) => {
-    return subscription.cancelsAt
+    return subscription.endsAt
       ? this.formatDate(subscription.endsAt)
       : null;
   };

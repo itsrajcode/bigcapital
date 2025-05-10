@@ -27,6 +27,14 @@ function SubscriptionRoot({ openAlert, openDrawer }) {
   const { mainSubscription } = useBillingPageBoot();
   const { isFirstPlan, setIsFirstPlan } = useChangeSubscriptionPlanStore();
 
+  console.log('[DEBUG] BillingSubscription - mainSubscription:', mainSubscription);
+  if (mainSubscription) {
+    console.log('[DEBUG] lemonSubscriptionId value:', mainSubscription.lemonSubscriptionId);
+    console.log('[DEBUG] lemonSubscriptionId type:', typeof mainSubscription.lemonSubscriptionId);
+    console.log('[DEBUG] lemonSubscriptionId === true?', mainSubscription.lemonSubscriptionId === true);
+    console.log('[DEBUG] lemonSubscriptionId !== true?', mainSubscription.lemonSubscriptionId !== true);
+  }
+
   const handleUpgradeBtnClick = () => {
     openDrawer(DRAWERS.CHANGE_SUBSCARIPTION_PLAN);
   };
@@ -38,6 +46,7 @@ function SubscriptionRoot({ openAlert, openDrawer }) {
 
   // If no subscription, show only upgrade button
   if (!mainSubscription) {
+    console.log('[DEBUG] No mainSubscription found, showing trial view');
     return (
       <Card className={styles.root}>
         <Stack spacing={6}>

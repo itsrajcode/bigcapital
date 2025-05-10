@@ -32,14 +32,25 @@ export const getSubscriptionFactory = (slug) =>
 
 export const isSubscriptionOnTrialFactory = (slug) =>
   createSelector(
-    getSubscriptionFactory(slug), // Use the new factory here for consistency
-    (subscription) => subscription?.status === 'on_trial',
+    getSubscriptionFactory(slug),
+    (subscription) => {
+      // Handle both onTrial (camelCase) and on_trial (snake_case) property names
+      // Also check status which could be 'on_trial' (snake_case)
+      return subscription?.status === 'on_trial' || 
+             subscription?.onTrial === true || 
+             subscription?.on_trial === true;
+    }
   );
 
 export const isSubscriptionActiveFactory = (slug) =>
-  createSelector(getSubscriptionFactory(slug), (subscription) => { // Use the new factory
-    return subscription?.status === 'active';
-  });
+  createSelector(
+    getSubscriptionFactory(slug),
+    (subscription) => {
+      // Check active status and properties
+      return subscription?.status === 'active' || 
+             subscription?.active === true;
+    }
+  );
 
 export const isSubscriptionInactiveFactory = (slug) =>
   createSelector(

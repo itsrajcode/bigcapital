@@ -22,6 +22,7 @@ export default class SubscriptionService {
     const subscriptions = (await PlanSubscription.query()
       .where('tenant_id', tenantId)
       .withGraphFetched('plan')) as PlanSubscription[];
+    console.log('[DEBUG] subscriptions:', subscriptions);
 
     const isLemonSqueezyIds = this.checkLemonSqueezyId(subscriptions);
     if (isLemonSqueezyIds) {
@@ -45,8 +46,9 @@ export default class SubscriptionService {
           return [subscription.lemonSubscriptionId, res.data];
         }
       });
+    console.log('[DEBUG] lemonSubscriptionsResult:', lemonSubscriptionsResult);
     const lemonSubscriptions = fromPairs(
-      lemonSubscriptionsResult?.results.filter((result) => !!result[1])
+      lemonSubscriptionsResult?.results.filter((result) => result && !!result[1])
     );
     return this.transformer.transform(
       tenantId,
