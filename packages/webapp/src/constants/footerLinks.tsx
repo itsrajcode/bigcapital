@@ -4,7 +4,7 @@ import intl from 'react-intl-universal';
 export const getFooterLinks = () => [
   {
     title: intl.get('blog'),
-    link: 'https://docs.bigcapital.ly/blog',
+    link: 'https://bigcapital.app/blog',
   },
   {
     title: intl.get('community'),
@@ -16,10 +16,10 @@ export const getFooterLinks = () => [
   },
   {
     title: intl.get('docs'),
-    link: 'https://docs.bigcapital.ly',
+    link: 'https://docs.bigcapital.app',
   },
   {
     title: 'Bigcapital',
-    link: 'http://bigcapital.ly',
+    link: 'http://bigcapital.app',
   },
 ];
