@@ -25,6 +25,10 @@ function SidebarHeadJSX({
   // Get the first letter of organization name for minimized sidebar
   const firstLetter = organization.name ? organization.name.charAt(0).toUpperCase() : '';
 
+  const getTextLength = (text) => {
+    return text && text.length > 18 ? 'long' : 'short';
+  }
+
   return (
     <div className="sidebar__head">
       {/* Company initial for minimized sidebar */}
@@ -38,7 +42,9 @@ function SidebarHeadJSX({
           rightIcon={<Icon icon={'caret-down-16'} size={16} />}
           title={organization.name}
         >
-          {organization.name}
+          <span data-length={getTextLength(organization.name)}>
+            {organization.name}
+          </span>
         </Button>
       </div>
     </div>
